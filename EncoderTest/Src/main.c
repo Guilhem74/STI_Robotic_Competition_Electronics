@@ -167,7 +167,7 @@ int main(void)
 	uint32_t i1[8]={0},i2[8]={0},j1[8]={0},j2[8]={0},j;
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
-		uint8_t T[5]="Hi";
+	uint8_t T[5]="Hi";
   while (1)
   {
     /* USER CODE END WHILE */
