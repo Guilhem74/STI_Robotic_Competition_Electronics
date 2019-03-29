@@ -1,7 +1,18 @@
 #MicroXplorer Configuration settings - do not modify
 Dma.Request0=USART2_TX
 Dma.Request1=USART2_RX
-Dma.RequestsNb=2
+Dma.Request2=TIM1_UP
+Dma.RequestsNb=3
+Dma.TIM1_UP.2.Direction=DMA_PERIPH_TO_MEMORY
+Dma.TIM1_UP.2.FIFOMode=DMA_FIFOMODE_DISABLE
+Dma.TIM1_UP.2.Instance=DMA2_Stream5
+Dma.TIM1_UP.2.MemDataAlignment=DMA_MDATAALIGN_HALFWORD
+Dma.TIM1_UP.2.MemInc=DMA_MINC_ENABLE
+Dma.TIM1_UP.2.Mode=DMA_NORMAL
+Dma.TIM1_UP.2.PeriphDataAlignment=DMA_PDATAALIGN_HALFWORD
+Dma.TIM1_UP.2.PeriphInc=DMA_PINC_DISABLE
+Dma.TIM1_UP.2.Priority=DMA_PRIORITY_LOW
+Dma.TIM1_UP.2.RequestParameters=Instance,Direction,PeriphInc,MemInc,PeriphDataAlignment,MemDataAlignment,Mode,Priority,FIFOMode
 Dma.USART2_RX.1.Direction=DMA_PERIPH_TO_MEMORY
 Dma.USART2_RX.1.FIFOMode=DMA_FIFOMODE_DISABLE
 Dma.USART2_RX.1.Instance=DMA1_Stream5
@@ -78,6 +89,7 @@ MxDb.Version=DB.5.0.1
 NVIC.BusFault_IRQn=true\:0\:0\:false\:false\:true\:true
 NVIC.DMA1_Stream5_IRQn=true\:0\:0\:false\:false\:true\:false
 NVIC.DMA1_Stream6_IRQn=true\:0\:0\:false\:false\:true\:false
+NVIC.DMA2_Stream5_IRQn=true\:0\:0\:false\:false\:true\:false
 NVIC.DebugMonitor_IRQn=true\:0\:0\:false\:false\:true\:true
 NVIC.HardFault_IRQn=true\:0\:0\:false\:false\:true\:true
 NVIC.MemoryManagement_IRQn=true\:0\:0\:false\:false\:true\:true

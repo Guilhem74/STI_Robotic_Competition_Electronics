@@ -69,6 +69,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim9;
+DMA_HandleTypeDef hdma_tim1_up;
 
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
@@ -100,8 +101,9 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t UART_RX_DMA[64]="";
-uint8_t UART_TX_DMA[64]="";
+#define SIZE_BUFFER_UART 64
+uint8_t UART_RX_DMA[SIZE_BUFFER_UART]="";
+uint8_t UART_TX_DMA[SIZE_BUFFER_UART]="";
 /* USER CODE END 0 */
 
 /**
@@ -149,17 +151,14 @@ int main(void)
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	// hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 	HAL_UART_Receive_DMA (&huart2, UART_RX_DMA, 10); // Specify location and size, size is used for the interruptions
-	
-	
-	uint8_t T[5]="Hi";
+	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint32_t i1[8]={0},i2[8]={0},j1[8]={0},j2[8]={0},j;
-	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
-
+	uint32_t i,i2[8]={0},j1[8]={0},j2[8]={0},j;
+	uint8_t T[5]="Hi";
   while (1)
   {
     /* USER CODE END WHILE */
@@ -171,9 +170,9 @@ int main(void)
 		  TIM2->CCR2=0;
 			Transmit_UART(T,5);
 
-		if(i1[0]==i2[0]+1&& j==1)
+		if(j1[0]==i2[0]+1&& j==1)
 		{
-			i1[0] = TIM1->CNT;
+			j1[0] = TIM1->CNT;
 			j1[0]=0;
 		}
 
@@ -588,6 +587,7 @@ static void MX_DMA_Init(void)
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
+  __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
   /* DMA1_Stream5_IRQn interrupt configuration */
@@ -596,6 +596,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+  /* DMA2_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
 }
 
