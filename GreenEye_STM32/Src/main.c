@@ -44,6 +44,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* USER CODE END Includes */
 
@@ -69,6 +71,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim9;
+TIM_HandleTypeDef htim10;
 DMA_HandleTypeDef hdma_tim1_up;
 
 UART_HandleTypeDef huart2;
@@ -95,15 +98,28 @@ static void MX_TIM4_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
-
+void Transmit_RX_UART(char *T, int length)
+{
+	
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define SIZE_BUFFER_UART 64
-uint8_t UART_RX_DMA[SIZE_BUFFER_UART]="";
-uint8_t UART_TX_DMA[SIZE_BUFFER_UART]="";
+#define SIZE_UART 64
+uint8_t UART_RX_DMA[SIZE_UART]="";
+uint8_t UART_TX_DMA[SIZE_UART]="";
+#define SIZE_BUFFER 8
+uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART];
+uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART];
+uint8_t Indice_Start_RX=0,Indice_Stop_RX=0;
+uint8_t Indice_Start_TX=0,Indice_Stop_TX=0;
+
+int16_t Encoder_Right_Past=0,Encoder_Right=0,Encoder_Left_Past=0,Encoder_Left=0;
+int32_t Angle=0,X=0,Y=0;
+uint16_t TICS_2_MM=0,SPACING_WHEELS=0;
 /* USER CODE END 0 */
 
 /**
@@ -142,6 +158,7 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM2_Init();
   MX_USART2_UART_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start(&htim1);  //PA9 & PA8 for ch1 and ch2 of encoder by default
 	//HAL_TIM_Base_Start(&htim5);  //PA9 & PA8 for ch1 and ch2 of encoder by default
@@ -149,34 +166,47 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);   // Enable IDLE Line Interrupt
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
-	// hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
+	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 	HAL_UART_Receive_DMA (&huart2, UART_RX_DMA, 10); // Specify location and size, size is used for the interruptions
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim10);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint32_t i,i2[8]={0},j1[8]={0},j2[8]={0},j;
 	uint8_t T[5]="Hi";
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		
-			 j = TIM5->CNT;
-			TIM2->CCR1=0;
-		  TIM2->CCR2=0;
-			Transmit_UART(T,5);
+//		Encoder_Right_Past=Encoder_Right;
+//		Encoder_Left_Past=Encoder_Left;
+//		Encoder_Right=TIM1->CCR1;
+//		Encoder_Left=TIM5->CCR1;
+//		int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
+//		int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
+//		if(abs(Delta_Encoder_Right)>65535/4||abs(Delta_Encoder_Left)>65535/4)
+//		{
+//			//Probably sampling issues, overflowing/ missing steps seems ineluctable at that point.
+//		}
+//		/*
+//		SPACING_WHEELS
+//		TICS_2_MM
+//		*/
+//		Delta_Encoder_Right=Delta_Encoder_Right*TICS_2_MM;
+//		Delta_Encoder_Left=Delta_Encoder_Left*TICS_2_MM;
+//		Angle=(Delta_Encoder_Right-Delta_Encoder_Left)/SPACING_WHEELS;
+//		X +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * cos(Angle);
+//		Y +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * sin(Angle);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
+		TIM2->CCR1=2100;
+		TIM2->CCR2=2100;
 
-		if(j1[0]==i2[0]+1&& j==1)
-		{
-			j1[0] = TIM1->CNT;
-			j1[0]=0;
-		}
 
-  }
+	}
   /* USER CODE END 3 */
 }
 
@@ -293,7 +323,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4200;
+  htim2.Init.Period = 4200-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
@@ -548,6 +578,36 @@ static void MX_TIM9_Init(void)
 }
 
 /**
+  * @brief TIM10 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM10_Init(void)
+{
+
+  /* USER CODE BEGIN TIM10_Init 0 */
+
+  /* USER CODE END TIM10_Init 0 */
+
+  /* USER CODE BEGIN TIM10_Init 1 */
+
+  /* USER CODE END TIM10_Init 1 */
+  htim10.Instance = TIM10;
+  htim10.Init.Prescaler = 0;
+  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim10.Init.Period = 2100;
+  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM10_Init 2 */
+
+  /* USER CODE END TIM10_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -626,11 +686,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD2_Pin PA11 PA12 */
-  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_11|GPIO_PIN_12;
+  /*Configure GPIO pins : LD2_Pin PA11 */
+  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
