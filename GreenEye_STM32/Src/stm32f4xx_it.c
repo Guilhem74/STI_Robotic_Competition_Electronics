@@ -38,6 +38,9 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "Global_variables.h"
+#include "Communication_function.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -241,7 +244,7 @@ void DMA1_Stream6_IRQHandler(void)
   /* USER CODE END DMA1_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_tx);
   /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
-
+	
   /* USER CODE END DMA1_Stream6_IRQn 1 */
 }
 
@@ -251,12 +254,13 @@ void DMA1_Stream6_IRQHandler(void)
 void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
-
+				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   HAL_TIM_IRQHandler(&htim10);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
+		
+
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
@@ -293,6 +297,17 @@ void DMA2_Stream5_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)  // change USART instance
+    {
+			Indice_Start_TX=(Indice_Start_TX+1)%SIZE_BUFFER;
+			if(Indice_Start_TX!=Indice_Stop_TX && huart2.gState == HAL_UART_STATE_READY)
+			{
+				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
+				strcpy((char *)BUFFER_TX[Indice_Start_TX], "");
+			}
+    }
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

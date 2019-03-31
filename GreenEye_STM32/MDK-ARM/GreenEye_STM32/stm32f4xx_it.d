@@ -30,4 +30,8 @@ greeneye_stm32\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal
 greeneye_stm32\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 greeneye_stm32\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 greeneye_stm32\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+greeneye_stm32\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 greeneye_stm32\stm32f4xx_it.o: ../Inc/stm32f4xx_it.h
+greeneye_stm32\stm32f4xx_it.o: ../Src/Global_variables.h
+greeneye_stm32\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+greeneye_stm32\stm32f4xx_it.o: ../Src/Communication_function.h

@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F401xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;             ../Drivers/STM32F4xx_HAL_Driver/Inc;             ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;             ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;             ../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Inc;                ../Drivers/STM32F4xx_HAL_Driver/Inc;                ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                ../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,6 +392,21 @@
         <Group>
           <GroupName>Application/User</GroupName>
           <Files>
+            <File>
+              <FileName>Communication_function.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\Communication_function.c</FilePath>
+            </File>
+            <File>
+              <FileName>Communication_function.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\Communication_function.h</FilePath>
+            </File>
+            <File>
+              <FileName>Global_variables.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\Global_variables.h</FilePath>
+            </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>

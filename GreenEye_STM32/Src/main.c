@@ -46,12 +46,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include "Communication_function.h"
+#include "Global_Variables.h"
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define SIZE_UART 64 
+uint8_t UART_RX_DMA[SIZE_UART]=""; 
+uint8_t UART_TX_DMA[SIZE_UART]=""; 
+#define SIZE_BUFFER 8 
+uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART]; 
+uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART]; 
+uint8_t Indice_Start_RX=0,Indice_Stop_RX=0; 
+uint8_t Indice_Start_TX=0,Indice_Stop_TX=0; 
+ 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -79,12 +90,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
-void Transmit_UART(uint8_t * T, uint8_t size)
-{
-	if(huart2.gState== HAL_UART_STATE_READY)
-			HAL_UART_Transmit_DMA(&huart2,T,size);
 
-}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,22 +106,12 @@ static void MX_TIM2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
-void Transmit_RX_UART(char *T, int length)
-{
-	
-}
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define SIZE_UART 64
-uint8_t UART_RX_DMA[SIZE_UART]="";
-uint8_t UART_TX_DMA[SIZE_UART]="";
-#define SIZE_BUFFER 8
-uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART];
-uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART];
-uint8_t Indice_Start_RX=0,Indice_Stop_RX=0;
-uint8_t Indice_Start_TX=0,Indice_Stop_TX=0;
+
 
 int16_t Encoder_Right_Past=0,Encoder_Right=0,Encoder_Left_Past=0,Encoder_Left=0;
 int32_t Angle=0,X=0,Y=0;
@@ -167,6 +163,8 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);   // Enable IDLE Line Interrupt
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
+	hdma_usart2_tx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
+
 	HAL_UART_Receive_DMA (&huart2, UART_RX_DMA, 10); // Specify location and size, size is used for the interruptions
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
@@ -176,9 +174,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint8_t T[5]="Hi";
+	/* Communication with :Transmit_UART();)*/
   while (1)
   {
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -201,10 +200,9 @@ int main(void)
 //		Angle=(Delta_Encoder_Right-Delta_Encoder_Left)/SPACING_WHEELS;
 //		X +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * cos(Angle);
 //		Y +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * sin(Angle);
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
 		TIM2->CCR1=2100;
 		TIM2->CCR2=2100;
-
+		
 
 	}
   /* USER CODE END 3 */
@@ -593,9 +591,9 @@ static void MX_TIM10_Init(void)
 
   /* USER CODE END TIM10_Init 1 */
   htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 0;
+  htim10.Init.Prescaler = 1;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 2100;
+  htim10.Init.Period = 15000;//*2
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
@@ -623,7 +621,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 230400;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
