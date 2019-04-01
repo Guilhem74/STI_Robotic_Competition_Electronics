@@ -55,7 +55,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 #define SIZE_UART 64 
-uint8_t UART_RX_DMA[SIZE_UART]=""; 
+uint8_t UART_RX_Analyse[SIZE_UART]=""; 
 uint8_t UART_TX_DMA[SIZE_UART]=""; 
 #define SIZE_BUFFER 8 
 uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART]; 
@@ -163,9 +163,9 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);   // Enable IDLE Line Interrupt
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
-	hdma_usart2_tx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 
-	HAL_UART_Receive_DMA (&huart2, UART_RX_DMA, 10); // Specify location and size, size is used for the interruptions
+	
+	HAL_UART_Receive_DMA (&huart2, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim10);
@@ -202,7 +202,7 @@ int main(void)
 //		Y +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * sin(Angle);
 		TIM2->CCR1=2100;
 		TIM2->CCR2=2100;
-		
+		Analyse_RX_Buffer();
 
 	}
   /* USER CODE END 3 */

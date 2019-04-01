@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include "main.h"
 #define SIZE_UART 64
-extern uint8_t UART_RX_DMA[SIZE_UART];
 extern uint8_t UART_TX_DMA[SIZE_UART];
+extern uint8_t UART_RX_Analyse[SIZE_UART];
 #define SIZE_BUFFER 8
 extern uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART];
 extern uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART];

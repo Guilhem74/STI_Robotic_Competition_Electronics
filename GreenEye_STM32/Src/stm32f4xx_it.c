@@ -231,6 +231,7 @@ void DMA1_Stream5_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_usart2_rx);
   /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
 
+
   /* USER CODE END DMA1_Stream5_IRQn 1 */
 }
 
@@ -274,7 +275,10 @@ void USART2_IRQHandler(void)
 	{//Got some delay in the communication, time to check if the frame is full
 		//Store what has been received
 		//Restart DMA
-			__HAL_UART_CLEAR_IDLEFLAG (&huart2);
+		Indice_Stop_RX=(Indice_Stop_RX+1)%SIZE_BUFFER;
+		HAL_UART_DMAStop(&huart2);
+		HAL_UART_Receive_DMA (&huart2, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
+		__HAL_UART_CLEAR_IDLEFLAG (&huart2);
 	}
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
