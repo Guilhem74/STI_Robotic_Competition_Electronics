@@ -1,6 +1,6 @@
 #ifndef __Communication_Function_H
 #define __Communication_Function_H
-#include "Global_variables.h"
+#include "Extern_call_variable.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"

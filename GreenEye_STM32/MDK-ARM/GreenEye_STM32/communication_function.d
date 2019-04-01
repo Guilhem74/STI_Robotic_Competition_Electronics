@@ -1,6 +1,6 @@
 greeneye_stm32\communication_function.o: ..\Src\Communication_function.c
 greeneye_stm32\communication_function.o: ..\Src\Communication_function.h
-greeneye_stm32\communication_function.o: ..\Src\Global_variables.h
+greeneye_stm32\communication_function.o: ..\Src\Extern_call_variable.h
 greeneye_stm32\communication_function.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 greeneye_stm32\communication_function.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 greeneye_stm32\communication_function.o: ../Inc/main.h

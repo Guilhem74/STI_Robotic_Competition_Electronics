@@ -48,21 +48,13 @@
 #include <math.h>
 #include <string.h>
 #include "Communication_function.h"
-#include "Global_Variables.h"
-
+#include "Extern_call_variable.h"
+#include "List_Variables.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define SIZE_UART 64 
-uint8_t UART_RX_Analyse[SIZE_UART]=""; 
-uint8_t UART_TX_DMA[SIZE_UART]=""; 
-#define SIZE_BUFFER 8 
-uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART]; 
-uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART]; 
-uint8_t Indice_Start_RX=0,Indice_Stop_RX=0; 
-uint8_t Indice_Start_TX=0,Indice_Stop_TX=0; 
- 
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -113,9 +105,7 @@ static void MX_TIM10_Init(void);
 /* USER CODE BEGIN 0 */
 
 
-int16_t Encoder_Right_Past=0,Encoder_Right=0,Encoder_Left_Past=0,Encoder_Left=0;
-int32_t Angle=0,X=0,Y=0;
-uint16_t TICS_2_MM=0,SPACING_WHEELS=0;
+
 /* USER CODE END 0 */
 
 /**
@@ -181,29 +171,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		Encoder_Right_Past=Encoder_Right;
-//		Encoder_Left_Past=Encoder_Left;
-//		Encoder_Right=TIM1->CCR1;
-//		Encoder_Left=TIM5->CCR1;
-//		int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
-//		int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
-//		if(abs(Delta_Encoder_Right)>65535/4||abs(Delta_Encoder_Left)>65535/4)
-//		{
-//			//Probably sampling issues, overflowing/ missing steps seems ineluctable at that point.
-//		}
-//		/*
-//		SPACING_WHEELS
-//		TICS_2_MM
-//		*/
-//		Delta_Encoder_Right=Delta_Encoder_Right*TICS_2_MM;
-//		Delta_Encoder_Left=Delta_Encoder_Left*TICS_2_MM;
-//		Angle=(Delta_Encoder_Right-Delta_Encoder_Left)/SPACING_WHEELS;
-//		X +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * cos(Angle);
-//		Y +=  (Delta_Encoder_Right+Delta_Encoder_Left)/2 * sin(Angle);
-		TIM2->CCR1=2100;
-		TIM2->CCR2=2100;
-		Analyse_RX_Buffer();
 
+	//	TIM2->CCR1=2100;
+	//	TIM2->CCR2=2100;
+		Analyse_RX_Buffer();
+		Transmit_UART("Beeee\r\n");
+		HAL_Delay(100);
 	}
   /* USER CODE END 3 */
 }
@@ -593,7 +566,7 @@ static void MX_TIM10_Init(void)
   htim10.Instance = TIM10;
   htim10.Init.Prescaler = 1;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 15000;//*2
+  htim10.Init.Period = 15000;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
@@ -621,7 +594,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 230400;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
