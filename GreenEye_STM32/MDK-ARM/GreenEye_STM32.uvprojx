@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F401xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;                ../Drivers/STM32F4xx_HAL_Driver/Inc;                ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                ../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Inc;                  ../Drivers/STM32F4xx_HAL_Driver/Inc;                  ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                  ../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,6 +403,16 @@
               <FilePath>..\Src\Communication_function.h</FilePath>
             </File>
             <File>
+              <FileName>Extern_call_variable.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\Extern_call_variable.h</FilePath>
+            </File>
+            <File>
+              <FileName>List_Variables.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\List_Variables.h</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -416,16 +426,6 @@
               <FileName>stm32f4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>Extern_call_variable.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Src\Extern_call_variable.h</FilePath>
-            </File>
-            <File>
-              <FileName>List_Variables.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Src\List_Variables.h</FilePath>
             </File>
           </Files>
         </Group>

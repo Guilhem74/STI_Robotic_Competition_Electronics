@@ -78,9 +78,12 @@
 extern DMA_HandleTypeDef hdma_tim1_up;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim10;
-extern DMA_HandleTypeDef hdma_usart2_tx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
+extern DMA_HandleTypeDef hdma_usart2_tx;
+extern DMA_HandleTypeDef hdma_usart6_rx;
+extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart6;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -227,11 +230,10 @@ void SysTick_Handler(void)
 void DMA1_Stream5_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
-	// RX STREAM
+
   /* USER CODE END DMA1_Stream5_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_rx);
   /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
-
 
   /* USER CODE END DMA1_Stream5_IRQn 1 */
 }
@@ -242,11 +244,11 @@ void DMA1_Stream5_IRQHandler(void)
 void DMA1_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream6_IRQn 0 */
-	//Tx stream
+
   /* USER CODE END DMA1_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_tx);
   /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
-	
+
   /* USER CODE END DMA1_Stream6_IRQn 1 */
 }
 
@@ -410,19 +412,34 @@ void TIM1_UP_TIM10_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-	if (__HAL_UART_GET_FLAG (&huart2, UART_FLAG_IDLE))
-	{//Got some delay in the communication, time to check if the frame is full
-		//Store what has been received
-		//Restart DMA
-		Indice_Stop_RX=(Indice_Stop_RX+1)%SIZE_BUFFER;
-		HAL_UART_DMAStop(&huart2);
-		HAL_UART_Receive_DMA (&huart2, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
-		__HAL_UART_CLEAR_IDLEFLAG (&huart2);
-	}
+
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
+		if (__HAL_UART_GET_FLAG (&huart2, UART_FLAG_IDLE))
+		{//Got some delay in the communication, time to check if the frame is full
+			//Store what has been received
+			//Restart DMA
+			Indice_Stop_RX_UART2=(Indice_Stop_RX_UART2+1)%SIZE_BUFFER;
+			HAL_UART_DMAStop(&huart2);
+			HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
+			__HAL_UART_CLEAR_IDLEFLAG (&huart2);
+		}
   /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream1 global interrupt.
+  */
+void DMA2_Stream1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream1_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart6_rx);
+  /* USER CODE BEGIN DMA2_Stream1_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream1_IRQn 1 */
 }
 
 /**
@@ -439,16 +456,62 @@ void DMA2_Stream5_IRQHandler(void)
   /* USER CODE END DMA2_Stream5_IRQn 1 */
 }
 
+/**
+  * @brief This function handles DMA2 stream6 global interrupt.
+  */
+void DMA2_Stream6_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream6_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart6_tx);
+  /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART6 global interrupt.
+  */
+void USART6_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART6_IRQn 0 */
+		if (__HAL_UART_GET_FLAG (&huart6, UART_FLAG_IDLE))
+		{//Got some delay in the communication, time to check if the frame is full
+			//Store what has been received
+			//Restart DMA
+			Indice_Stop_RX=(Indice_Stop_RX+1)%SIZE_BUFFER;
+			HAL_UART_DMAStop(&huart6);
+			HAL_UART_Receive_DMA (&huart6, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
+			__HAL_UART_CLEAR_IDLEFLAG (&huart6);
+		}
+
+  /* USER CODE END USART6_IRQn 0 */
+  HAL_UART_IRQHandler(&huart6);
+  /* USER CODE BEGIN USART6_IRQn 1 */
+
+  /* USER CODE END USART6_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {//End of TX transmission
-    if (huart->Instance == USART2)  // change USART instance
+    if (huart->Instance == USART6)  // change USART instance
     {
 			Indice_Start_TX=(Indice_Start_TX+1)%SIZE_BUFFER;
-			if(Indice_Start_TX!=Indice_Stop_TX && huart2.gState == HAL_UART_STATE_READY)
+			if(Indice_Start_TX!=Indice_Stop_TX && huart6.gState == HAL_UART_STATE_READY)
 			{
-				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
+				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
 				strcpy((char *)BUFFER_TX[Indice_Start_TX], "");
+			}
+    }
+		if (huart->Instance == USART2)  // change USART instance
+    {
+			Indice_Start_TX_UART2=(Indice_Start_TX_UART2+1)%SIZE_BUFFER;
+			if(Indice_Start_TX_UART2!=Indice_Stop_TX_UART2 && huart2.gState == HAL_UART_STATE_READY)
+			{
+				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX_UART2[Indice_Start_TX_UART2],strlen((char*)BUFFER_TX_UART2[Indice_Start_TX_UART2]));
+				strcpy((char *)BUFFER_TX_UART2[Indice_Start_TX_UART2], "");
 			}
     }
 }

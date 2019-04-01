@@ -6,13 +6,15 @@
 #define PI 3.14159265359
 
 #define SIZE_UART 64
-extern uint8_t UART_TX_DMA[SIZE_UART];
 extern uint8_t UART_RX_Analyse[SIZE_UART];
 #define SIZE_BUFFER 8
-extern uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART];
-extern uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART];
+extern uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART],BUFFER_RX_UART2[SIZE_BUFFER][SIZE_UART];
+extern uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART],BUFFER_TX_UART2[SIZE_BUFFER][SIZE_UART];
 extern uint8_t Indice_Start_RX,Indice_Stop_RX;
+extern uint8_t Indice_Start_RX_UART2,Indice_Stop_RX_UART2;
 extern uint8_t Indice_Start_TX,Indice_Stop_TX;
+extern uint8_t Indice_Start_TX_UART2,Indice_Stop_TX_UART2;
+
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
@@ -21,9 +23,11 @@ extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim9;
 extern TIM_HandleTypeDef htim10;
 extern DMA_HandleTypeDef hdma_tim1_up;
+extern UART_HandleTypeDef huart6;
 extern UART_HandleTypeDef huart2;
-extern DMA_HandleTypeDef hdma_usart2_tx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
+
+extern DMA_HandleTypeDef hdma_usart6_tx;
+extern DMA_HandleTypeDef hdma_usart6_rx;
 /* Robot Parameters*/
 extern int16_t Encoder_Right_Past,Encoder_Right,Encoder_Left_Past,Encoder_Left;
 extern int32_t ANGLE_POS_RAD,X_POS_MM,Y_POS_MM;
