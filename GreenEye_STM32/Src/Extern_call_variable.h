@@ -30,10 +30,10 @@ extern DMA_HandleTypeDef hdma_usart6_tx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
 /* Robot Parameters*/
 extern int16_t Encoder_Right_Past,Encoder_Right,Encoder_Left_Past,Encoder_Left;
-extern int32_t ANGLE_POS_RAD,X_POS_MM,Y_POS_MM;
-extern int32_t ANGLE_DES_RAD,X_DES_MM,Y_DES_MM;
-extern int32_t ANGLE_POS_RAD_CACHE,X_POS_MM_CACHE,Y_POS_MM_CACHE;
-extern int32_t ANGLE_DES_RAD_CACHE,X_DES_MM_CACHE,Y_DES_MM_CACHE;
+extern float ANGLE_POS_RAD,X_POS_MM,Y_POS_MM;
+extern float ANGLE_DES_RAD,X_DES_MM,Y_DES_MM;
+extern float ANGLE_POS_RAD_CACHE,X_POS_MM_CACHE,Y_POS_MM_CACHE;
+extern float ANGLE_DES_RAD_CACHE,X_DES_MM_CACHE,Y_DES_MM_CACHE;
 extern int8_t UPDATE_POS_PARAMETERS,UPDATE_DEST_PARAMETERS;
 extern int16_t TICS_2_MM, SPACING_WHEELS, TICS_2_MM_CACHE,SPACING_WHEELS_CACHE;
 extern int8_t CONTROL_ENABLED, UPDATE_CONTROL_PARAMETERS;

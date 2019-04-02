@@ -6,6 +6,13 @@
 #include "main.h"
 void Transmit_UART(uint8_t * T) ;
 void Analyse_RX_Buffer(void);
-int read_double(char *line, uint8_t *char_counter, int16_t *double_ptr);
-int next_statement(char *letter, int16_t *double_ptr, char *line, uint8_t *char_counter);
+int read_double(char *line, int *char_counter, float *double_ptr);
+int next_statement(char *letter, float *double_ptr, char *line, int *char_counter);
+float strtod_M(const char *str, char **endptr);
+
+void String_Analysis(uint8_t* Input);
+
+
+void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );
+
 #endif
