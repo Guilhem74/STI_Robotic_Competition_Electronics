@@ -427,6 +427,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>Control_Function.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\Control_Function.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

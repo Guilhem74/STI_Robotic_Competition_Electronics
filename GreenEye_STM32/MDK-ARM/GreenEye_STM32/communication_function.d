@@ -34,3 +34,4 @@ greeneye_stm32\communication_function.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm
 greeneye_stm32\communication_function.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 greeneye_stm32\communication_function.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 greeneye_stm32\communication_function.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+greeneye_stm32\communication_function.o: ..\Src\Communication_function.h

@@ -161,7 +161,7 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 					Y_DES_MM_CACHE=Table_Parameters_Number[j];
 					break;
 				case 'A':
-					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j];
+					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j]*PI/180;
 					break;
 			}
 			j++;
