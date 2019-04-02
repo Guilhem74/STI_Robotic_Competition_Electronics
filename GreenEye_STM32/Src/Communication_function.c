@@ -54,6 +54,9 @@ void String_Analysis(uint8_t* Input)
 		case 'G':
 				switch((int) Table_values[0])
 				{
+					case 0:
+						COMMAND_G0(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
+					break;
 					case 92:
 						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
 					break;
@@ -87,13 +90,87 @@ void String_Analysis(uint8_t* Input)
 					
 				}
 			break;
+		case 'O':
+				switch((int) Table_values[0])
+				{	
+				case 1:
+					COMMAND_O1(Table_Letter+1,Table_values+1,Parameters_N-1);//Set PWM
+					break;
+				}
+				break;
 		default :
 				sprintf((char*)Answer,"Unrecognized %s\r\n",UART_RX_Analyse);
 				Transmit_UART(Answer);
 			break;
 	}
 }
+void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//O1 H0/1 Sx
+	int j=0,Type=-1,PWM_CACHE=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'H':
+					Type=Table_Parameters_Number[j];				
+					break;
+				case 'S':
+					PWM_CACHE=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	
 
+	uint8_t Answer[40];
+	if(Type==1)
+	{
+		CONTROL_ENABLED=0;
+		TIM2->CCR1=PWM_CACHE;
+		sprintf((char*)Answer,"OK: PWM H1 S%d \r\n",PWM_CACHE);
+	}
+	else if(Type==0)
+	{//Right
+		CONTROL_ENABLED=0;
+		TIM2->CCR2=PWM_CACHE;
+		sprintf((char*)Answer,"OK: PWM H0 S%d \r\n",PWM_CACHE);
+	}
+	else
+	{
+		sprintf((char*)Answer,"KO: Select a tool(H0 or H1)\r\n ");
+	}
+	Transmit_UART(Answer);
+}
+void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//G92 Xx Yx Ax
+	if(UPDATE_DEST_PARAMETERS==0)
+	{
+		ANGLE_DES_RAD_CACHE=ANGLE_DES_RAD;
+		X_DES_MM_CACHE=X_DES_MM;
+		Y_DES_MM_CACHE=Y_DES_MM;
+	}
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'X':
+					X_DES_MM_CACHE=Table_Parameters_Number[j];				
+					break;
+				case 'Y':
+					Y_DES_MM_CACHE=Table_Parameters_Number[j];
+					break;
+				case 'A':
+					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_DEST_PARAMETERS=1;
+}
 void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
 {//G92 Xx Yx Ax
 	if(UPDATE_POS_PARAMETERS==0)
@@ -170,9 +247,9 @@ void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
 {// M135 Sx
 	if(Table_Parameters_Letter[0]=='S')
-		LOOP_CONTROL_TIMING=Table_Parameters_Number[0];
+		LOOP_CONTROL_TIMING_HZ=Table_Parameters_Number[0];
 	uint8_t Answer[40];
-	sprintf((char*)Answer,"OK: Timing loop : %0.2f \r\n",LOOP_CONTROL_TIMING);
+	sprintf((char*)Answer,"OK: Timing loop : %0.2f \r\n",LOOP_CONTROL_TIMING_HZ);
 	Transmit_UART(Answer);
 }
 void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )

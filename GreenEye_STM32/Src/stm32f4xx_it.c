@@ -255,14 +255,21 @@ void DMA1_Stream6_IRQHandler(void)
 /**
   * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
   */
+int16_t Delta_Encoder_Right;
+int16_t Delta_Encoder_Left;
 void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
+	if(__HAL_TIM_GET_FLAG(&htim10, TIM_FLAG_UPDATE) == RESET)
+	{  //Not A tim10 interrupt
+		HAL_TIM_IRQHandler(&htim1);
+			return;
+	}
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   HAL_TIM_IRQHandler(&htim10);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+
 	//Check if interrupt come from the timer 10
 			static float Previous_Error_Distance=0;
 			static float Previous_Error_Angle_Rad=0;
@@ -290,10 +297,10 @@ void TIM1_UP_TIM10_IRQHandler(void)
 				/* Localisation math*/
 				Encoder_Right_Past=Encoder_Right;
 				Encoder_Left_Past=Encoder_Left;
-				Encoder_Right=TIM1->CCR1;
-				Encoder_Left=TIM5->CCR1;
-				int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
-				int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
+				Encoder_Right=TIM5->CNT;
+				Encoder_Left=TIM1->CNT;
+				Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
+				Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
 				if(abs(Delta_Encoder_Right)>65535/4||abs(Delta_Encoder_Left)>65535/4)
 				{
 				//Probably sampling issues, overflowing/ missing steps seems ineluctable at that point.
@@ -301,9 +308,12 @@ void TIM1_UP_TIM10_IRQHandler(void)
 						sprintf((char*)Answer,"ERROR: Delta encoder is high  \r\n");
 						Transmit_UART(Answer);
 				}
-				float Distance=(Delta_Encoder_Right*TICS_2_MM+Delta_Encoder_Left*TICS_2_MM)/2;
-				float Angle_rad=(Delta_Encoder_Right*TICS_2_MM-Delta_Encoder_Left*TICS_2_MM)/SPACING_WHEELS;
+				volatile float Distance=(Delta_Encoder_Right+Delta_Encoder_Left)*TICS_2_MM/(2);
+				volatile float Angle_rad=(Delta_Encoder_Right-Delta_Encoder_Left)*TICS_2_MM/(SPACING_WHEELS);
 				ANGLE_POS_RAD+=Angle_rad;
+				float ANGLE_POS_DEG=ANGLE_POS_RAD*180/PI;
+
+
 				X_POS_MM +=  Distance * cos(ANGLE_POS_RAD);
 				Y_POS_MM +=  Distance * sin(ANGLE_POS_RAD);
 				/*END Localisaiton math*/
@@ -335,35 +345,36 @@ void TIM1_UP_TIM10_IRQHandler(void)
 			    Previous_Target_Angle_Speed=0;
 					return;
 				}
-				float Error_X=(X_DES_MM-X_POS_MM);
-				float Error_Y=(Y_DES_MM-Y_POS_MM);
-				float Error_Distance=sqrt(Error_X*Error_X+Error_Y*Error_Y);
-				float Error_Angle_Rad=atan2(Error_X,Error_Y);
-				if(Error_Angle_Rad>PI)
+				volatile int Error_X=(X_DES_MM-X_POS_MM);
+				volatile int Error_Y=(Y_DES_MM-Y_POS_MM);
+				volatile int Error_Distance=sqrt(Error_X*Error_X+Error_Y*Error_Y);
+				volatile float Error_Angle_Rad=atan2(Error_Y,Error_X);
+				while(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
-				if(Error_Angle_Rad<-PI)
+				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
-				if(Error_Angle_Rad>PI/2 || Error_Angle_Rad<-PI/2)//Backward move
+				if(Error_Angle_Rad>PI/2+0.0001 || Error_Angle_Rad<-PI/2-0.0001)//Backward move
 				{
 					Error_Distance=-Error_Distance;
 					Error_Angle_Rad+=PI;
 				}
-				float Speed_Distance=fabs(Previous_Error_Distance-Error_Distance)/LOOP_CONTROL_TIMING;
-				float Speed_Angle=fabs(Previous_Error_Angle_Rad-Error_Angle_Rad)/LOOP_CONTROL_TIMING;
-				float Acceleration_Distance=fabs(Previous_Speed_Distance-Speed_Distance)/LOOP_CONTROL_TIMING;
-				float Acceleration_Angle=fabs(Previous_Speed_Angle-Speed_Angle)/LOOP_CONTROL_TIMING;
-				float Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
-				float Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
-				float Target_Distance_Speed=0;
-				float Target_Angle_Speed=0;
+				
+				volatile int Speed_Distance=fabs(Previous_Error_Distance-Error_Distance)*LOOP_CONTROL_TIMING_HZ;
+				volatile float Speed_Angle=fabs(Previous_Error_Angle_Rad-Error_Angle_Rad)*LOOP_CONTROL_TIMING_HZ;
+				volatile int Acceleration_Distance=fabs(Previous_Speed_Distance-Speed_Distance)*LOOP_CONTROL_TIMING_HZ;
+				volatile float Acceleration_Angle=fabs(Previous_Speed_Angle-Speed_Angle)*LOOP_CONTROL_TIMING_HZ;
+				volatile int Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
+				volatile float Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
+				volatile int Target_Distance_Speed=0;
+				volatile float Target_Angle_Speed=0;
 				/* Distance Phase*/
 				if(fabs(Error_Distance)<(Distance_Braking+Distance_Braking*ANTICIPATION_PERCENTAGE))
 				{//Braking phase we reduce the speed by an increment of 1
-					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)-BRAKING_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)-BRAKING_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ;
 				}
 				else if(fabs(Previous_Target_Distance_Speed)<SPEED_MAX_DISTANCE_MM_S)
 				{// Acceleration phase
-					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ;
 				}
 				else
 				{//Constant speed phase
@@ -374,11 +385,11 @@ void TIM1_UP_TIM10_IRQHandler(void)
 				/* Angular Phase*/
 				if(fabs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE))
 				{//Braking phase we reduce the speed by an increment of 1
-					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)-BRAKING_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)-BRAKING_MAX_ANGLE_MM_S2/LOOP_CONTROL_TIMING_HZ;
 				}
 				else if(fabs(Previous_Target_Angle_Speed)<SPEED_MAX_ANGLE_MM_S)
 				{// Acceleration phase
-					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)+ACCELERATION_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)+ACCELERATION_MAX_ANGLE_MM_S2/LOOP_CONTROL_TIMING_HZ;
 				}
 				else
 				{//Constant speed phase
@@ -393,13 +404,47 @@ void TIM1_UP_TIM10_IRQHandler(void)
 				{
 					Target_Angle_Speed=-Target_Angle_Speed;
 				}
-				if(Error_Distance<FINAL_BOOL_DISTANCE_MM)
+				if(fabs(Error_Distance)<FINAL_BOOL_DISTANCE_MM)
 				{
+					
 					Target_Distance_Speed=0;
+					if(fabs(Error_Angle_Rad*180/PI)<5)
+						Target_Angle_Speed=0;
 					//TODO Finish line
 				}
-				//TODO PID
-				
+				volatile int Target_DISTANCE_PID=(int)(Target_Distance_Speed*P_DISTANCE);
+				volatile int Target_ANGLE_PID=(int)(Target_Angle_Speed*P_ANGLE)*0;
+				volatile int Output_Right_Motor=(int)(Target_DISTANCE_PID-Target_ANGLE_PID);
+				volatile int Output_Left_Motor=(int)(Target_DISTANCE_PID+Target_ANGLE_PID);
+				if(Output_Right_Motor>4019)
+				{
+					Output_Right_Motor=4019;
+				}
+				else if(Output_Right_Motor<-4019)
+				{
+					Output_Right_Motor=-4019;
+				}
+				if(Output_Left_Motor>4019)
+				{
+					Output_Left_Motor=4019;
+				}
+				else if(Output_Left_Motor<-4019)
+				{
+					Output_Left_Motor=-4019;
+				}
+				if(Output_Right_Motor>0)
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
+				else
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
+				if(Output_Left_Motor>0)
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_RESET);
+				else
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_SET);
+				TIM2->CCR2=(Output_Right_Motor);
+				TIM2->CCR1=(Output_Left_Motor);
+				uint8_t Answer[40];
+				sprintf((char*)Answer,"PID : D:%d G:%d EA:%0.2f ED:%d ES:%d\r\n",Output_Right_Motor,Output_Left_Motor,Error_Angle_Rad,Error_Distance,Target_Distance_Speed);
+				Transmit_UART(Answer);
 				Previous_Error_Distance=Error_Distance;
 				Previous_Error_Angle_Rad=Error_Angle_Rad;
 				Previous_Speed_Distance=Speed_Distance;

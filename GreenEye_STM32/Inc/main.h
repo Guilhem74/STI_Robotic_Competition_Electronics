@@ -84,6 +84,12 @@ void Error_Handler(void);
 #define B1_GPIO_Port GPIOC
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define Read_Pin GPIO_PIN_10
+#define Read_GPIO_Port GPIOA
+#define Motor_Drive_Pin GPIO_PIN_11
+#define Motor_Drive_GPIO_Port GPIOA
+#define Motor_DriveA12_Pin GPIO_PIN_12
+#define Motor_DriveA12_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
