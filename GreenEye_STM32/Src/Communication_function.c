@@ -55,8 +55,36 @@ void String_Analysis(uint8_t* Input)
 				switch((int) Table_values[0])
 				{
 					case 92:
-						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);
+						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
 					break;
+				}
+			break;
+		case 'M':
+				switch((int) Table_values[0])
+				{
+					case 3:
+						COMMAND_M3(Table_Letter+1,Table_values+1,Parameters_N-1);//Enable position control
+						break;
+					case 92:
+						COMMAND_M92(Table_Letter+1,Table_values+1,Parameters_N-1);//Robot parameters.
+						break;
+					case 112:
+						COMMAND_M112(Table_Letter+1,Table_values+1,Parameters_N-1);//Emergency Stop
+						break;
+					case 135:
+						COMMAND_M135(Table_Letter+1,Table_values+1,Parameters_N-1);//Set loop interval
+						break;
+					case 201:
+						COMMAND_M201(Table_Letter+1,Table_values+1,Parameters_N-1);//Set acceleration, speed and braking parameters
+						break;
+					case 202:
+						COMMAND_M202(Table_Letter+1,Table_values+1,Parameters_N-1);//Set final bool diameter
+						break;
+					case 301:
+						COMMAND_M301(Table_Letter+1,Table_values+1,Parameters_N-1);//Set PID parameters
+						break;
+					
+					
 				}
 			break;
 		default :
@@ -67,7 +95,7 @@ void String_Analysis(uint8_t* Input)
 }
 
 void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
-{
+{//G92 Xx Yx Ax
 	if(UPDATE_POS_PARAMETERS==0)
 	{
 		ANGLE_POS_RAD_CACHE=ANGLE_POS_RAD;
@@ -96,6 +124,186 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 	Transmit_UART(Answer);
 	UPDATE_POS_PARAMETERS=1;
 }
+void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M3 
+	CONTROL_ENABLED=1;
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: Control Enabled \r\n");
+	Transmit_UART(Answer);
+}
+void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M92 Dx Ax
+	if(UPDATE_POS_PARAMETERS==0)
+	{
+	 TICS_2_MM_CACHE=TICS_2_MM;
+   SPACING_WHEELS_CACHE=SPACING_WHEELS;
+	}
+	
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'D':
+					TICS_2_MM_CACHE=Table_Parameters_Number[j];
+					break;
+				case 'A':
+					SPACING_WHEELS_CACHE=Table_Parameters_Number[j];	
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: M92 Tics/MM S=%0.2f SpacingWheels=%0.2f\r\n",TICS_2_MM_CACHE,SPACING_WHEELS_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_POS_PARAMETERS=1;
+}
+void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M112
+	CONTROL_ENABLED=0;
+	TIM2->CCR1=0;//Set PWM to 0
+	TIM2->CCR2=0;//Set PWM to 0
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: Emergency Stop \r\n");
+	Transmit_UART(Answer);
+}
+void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M135 Sx
+	if(Table_Parameters_Letter[0]=='S')
+		LOOP_CONTROL_TIMING=Table_Parameters_Number[0];
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: Timing loop : %0.2f \r\n",LOOP_CONTROL_TIMING);
+	Transmit_UART(Answer);
+}
+void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M201 H0/1 Sx Ax Bx 
+	if(UPDATE_CONTROL_PARAMETERS==0)
+	{
+		SPEED_MAX_DISTANCE_MM_S_CACHE=SPEED_MAX_DISTANCE_MM_S;
+		ACCELERATION_MAX_DISTANCE_MM_S2_CACHE=ACCELERATION_MAX_DISTANCE_MM_S2;
+		BRAKING_MAX_DISTANCE_MM_S2_CACHE=BRAKING_MAX_DISTANCE_MM_S2;
+		
+		SPEED_MAX_ANGLE_MM_S_CACHE=SPEED_MAX_ANGLE_MM_S;
+		ACCELERATION_MAX_ANGLE_MM_S2_CACHE=ACCELERATION_MAX_ANGLE_MM_S2;
+		BRAKING_MAX_ANGLE_MM_S2_CACHE=BRAKING_MAX_ANGLE_MM_S2;
+	}
+	
+	int j=0;
+	int Type=-1;;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'H':
+					Type=Table_Parameters_Number[j];
+					break;
+				case 'A':
+					if(Type==0)
+							ACCELERATION_MAX_DISTANCE_MM_S2_CACHE=Table_Parameters_Number[j];
+					else if(Type==1)
+							ACCELERATION_MAX_ANGLE_MM_S2_CACHE=Table_Parameters_Number[j];			
+					break;
+				case 'B':
+					if(Type==0)
+							BRAKING_MAX_DISTANCE_MM_S2_CACHE=Table_Parameters_Number[j];
+					else if(Type==1)
+							BRAKING_MAX_ANGLE_MM_S2_CACHE=Table_Parameters_Number[j];	
+					break;
+				case 'S':
+					if(Type==0)
+							SPEED_MAX_DISTANCE_MM_S_CACHE=Table_Parameters_Number[j];
+					else if(Type==1)
+							SPEED_MAX_ANGLE_MM_S_CACHE=Table_Parameters_Number[j];	
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	if(Type==0)//Distance parameters
+		sprintf((char*)Answer,"OK: D_Profil S=%d A=%d B=%d \r\n",SPEED_MAX_DISTANCE_MM_S_CACHE,ACCELERATION_MAX_DISTANCE_MM_S2_CACHE,BRAKING_MAX_DISTANCE_MM_S2_CACHE);
+  else if(Type==1)//Angle parameters
+		sprintf((char*)Answer,"OK: A_Profil S=%d A=%d B=%d \r\n",SPEED_MAX_ANGLE_MM_S_CACHE,ACCELERATION_MAX_ANGLE_MM_S2_CACHE,BRAKING_MAX_ANGLE_MM_S2_CACHE);
+	else
+		sprintf((char*)Answer,"KO: No Profil selected (H0 or H1) \r\n");
+	Transmit_UART(Answer);
+	UPDATE_CONTROL_PARAMETERS=1;
+}
+void COMMAND_M202(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M202 Dx
+	if(UPDATE_CONTROL_PARAMETERS==0)
+	{
+		FINAL_BOOL_DISTANCE_MM_CACHE=FINAL_BOOL_DISTANCE_MM;
+	}
+	
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'D':
+							FINAL_BOOL_DISTANCE_MM_CACHE=Table_Parameters_Number[j];	
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"Ok: Bool_D_mm=%0.2f \r\n",FINAL_BOOL_DISTANCE_MM_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_CONTROL_PARAMETERS=1;
+}
+void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{// M301 H0/1 Px Ix Dx
+	if(UPDATE_CONTROL_PARAMETERS==0)
+	{
+		P_DISTANCE_CACHE= P_DISTANCE;
+		I_DISTANCE_CACHE= I_DISTANCE;
+		D_DISTANCE_CACHE= D_DISTANCE;
+		P_ANGLE_CACHE= P_ANGLE;
+		I_ANGLE_CACHE= I_ANGLE;
+		D_ANGLE_CACHE= D_ANGLE;
+	}
+	int j=0;
+	int Type=-1;;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'H':
+					Type=Table_Parameters_Number[j];
+					break;
+				case 'P':
+						if(Type==0)
+							P_DISTANCE_CACHE=Table_Parameters_Number[j];
+						else if(Type==1)
+							P_ANGLE_CACHE=Table_Parameters_Number[j];	
+					break;
+				case 'I':
+						if(Type==0)
+							D_DISTANCE_CACHE=Table_Parameters_Number[j];
+						else if(Type==1)
+							D_ANGLE_CACHE=Table_Parameters_Number[j];	
+					break;
+				case 'D':
+						if(Type==0)
+							I_DISTANCE_CACHE=Table_Parameters_Number[j];
+						else if(Type==1)
+							I_ANGLE_CACHE=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	if(Type==0)//Distance PID selected
+		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,D_DISTANCE_CACHE,I_DISTANCE_CACHE);
+	else if(Type==1)
+	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,D_ANGLE_CACHE,I_ANGLE_CACHE);
+	else
+		sprintf((char*)Answer,"KO: No PID type selected (H0 or H1) \r\n");
+	Transmit_UART(Answer);
+	UPDATE_CONTROL_PARAMETERS=1;
+}
+
+
 //https://github.com/x893/CNC-STM32/blob/master/src/application/gcode.c
 int next_statement(char *letter, float *double_ptr, char *line, int *char_counter)
 {

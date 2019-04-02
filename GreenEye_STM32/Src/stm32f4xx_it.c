@@ -264,12 +264,12 @@ void TIM1_UP_TIM10_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim10);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 	//Check if interrupt come from the timer 10
-			static int16_t Previous_Error_Distance=0;
-			static int16_t Previous_Error_Angle_Rad=0;
-			static int16_t Previous_Speed_Distance=0;
-			static int16_t Previous_Speed_Angle=0;
-			static int16_t Previous_Target_Distance_Speed=0;
-			static int16_t Previous_Target_Angle_Speed=0;
+			static float Previous_Error_Distance=0;
+			static float Previous_Error_Angle_Rad=0;
+			static float Previous_Speed_Distance=0;
+			static float Previous_Speed_Angle=0;
+			static float Previous_Target_Distance_Speed=0;
+			static float Previous_Target_Angle_Speed=0;
 
 			if(UPDATE_DEST_PARAMETERS==1)
 			{//Command to change destination parameters
@@ -297,9 +297,12 @@ void TIM1_UP_TIM10_IRQHandler(void)
 				if(abs(Delta_Encoder_Right)>65535/4||abs(Delta_Encoder_Left)>65535/4)
 				{
 				//Probably sampling issues, overflowing/ missing steps seems ineluctable at that point.
+						uint8_t Answer[40];
+						sprintf((char*)Answer,"ERROR: Delta encoder is high  \r\n");
+						Transmit_UART(Answer);
 				}
-				int32_t Distance=(Delta_Encoder_Right*TICS_2_MM+Delta_Encoder_Left*TICS_2_MM)/2;
-				int32_t Angle_rad=(Delta_Encoder_Right*TICS_2_MM-Delta_Encoder_Left*TICS_2_MM)/SPACING_WHEELS;
+				float Distance=(Delta_Encoder_Right*TICS_2_MM+Delta_Encoder_Left*TICS_2_MM)/2;
+				float Angle_rad=(Delta_Encoder_Right*TICS_2_MM-Delta_Encoder_Left*TICS_2_MM)/SPACING_WHEELS;
 				ANGLE_POS_RAD+=Angle_rad;
 				X_POS_MM +=  Distance * cos(ANGLE_POS_RAD);
 				Y_POS_MM +=  Distance * sin(ANGLE_POS_RAD);
@@ -332,10 +335,10 @@ void TIM1_UP_TIM10_IRQHandler(void)
 			    Previous_Target_Angle_Speed=0;
 					return;
 				}
-				int16_t Error_X=(X_DES_MM-X_POS_MM);
-				int16_t Error_Y=(Y_DES_MM-Y_POS_MM);
-				int16_t Error_Distance=sqrt(Error_X^2+Error_Y^2);
-				int16_t Error_Angle_Rad=atan2(Error_X,Error_Y);
+				float Error_X=(X_DES_MM-X_POS_MM);
+				float Error_Y=(Y_DES_MM-Y_POS_MM);
+				float Error_Distance=sqrt(Error_X*Error_X+Error_Y*Error_Y);
+				float Error_Angle_Rad=atan2(Error_X,Error_Y);
 				if(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
 				if(Error_Angle_Rad<-PI)
@@ -345,22 +348,22 @@ void TIM1_UP_TIM10_IRQHandler(void)
 					Error_Distance=-Error_Distance;
 					Error_Angle_Rad+=PI;
 				}
-				int16_t Speed_Distance=abs(Previous_Error_Distance-Error_Distance)/LOOP_CONTROL_TIMING;
-				int16_t Speed_Angle=abs(Previous_Error_Angle_Rad-Error_Angle_Rad)/LOOP_CONTROL_TIMING;
-				int16_t Acceleration_Distance=abs(Previous_Speed_Distance-Speed_Distance)/LOOP_CONTROL_TIMING;
-				int16_t Acceleration_Angle=abs(Previous_Speed_Angle-Speed_Angle)/LOOP_CONTROL_TIMING;
-				int16_t Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
-				int16_t Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
-				int16_t Target_Distance_Speed=0;
-				int16_t Target_Angle_Speed=0;
+				float Speed_Distance=fabs(Previous_Error_Distance-Error_Distance)/LOOP_CONTROL_TIMING;
+				float Speed_Angle=fabs(Previous_Error_Angle_Rad-Error_Angle_Rad)/LOOP_CONTROL_TIMING;
+				float Acceleration_Distance=fabs(Previous_Speed_Distance-Speed_Distance)/LOOP_CONTROL_TIMING;
+				float Acceleration_Angle=fabs(Previous_Speed_Angle-Speed_Angle)/LOOP_CONTROL_TIMING;
+				float Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
+				float Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
+				float Target_Distance_Speed=0;
+				float Target_Angle_Speed=0;
 				/* Distance Phase*/
-				if(abs(Error_Distance)<(Distance_Braking+Distance_Braking*ANTICIPATION_PERCENTAGE))
+				if(fabs(Error_Distance)<(Distance_Braking+Distance_Braking*ANTICIPATION_PERCENTAGE))
 				{//Braking phase we reduce the speed by an increment of 1
-					Target_Distance_Speed=abs(Previous_Target_Distance_Speed)-BRAKING_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)-BRAKING_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
 				}
-				else if(abs(Previous_Target_Distance_Speed)<SPEED_MAX_DISTANCE_MM_S)
+				else if(fabs(Previous_Target_Distance_Speed)<SPEED_MAX_DISTANCE_MM_S)
 				{// Acceleration phase
-					Target_Distance_Speed=abs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2*LOOP_CONTROL_TIMING;
 				}
 				else
 				{//Constant speed phase
@@ -369,13 +372,13 @@ void TIM1_UP_TIM10_IRQHandler(void)
 				/*END Distance Phase*/
 				
 				/* Angular Phase*/
-				if(abs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE))
+				if(fabs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE))
 				{//Braking phase we reduce the speed by an increment of 1
-					Target_Angle_Speed=abs(Previous_Target_Angle_Speed)-BRAKING_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)-BRAKING_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
 				}
-				else if(abs(Previous_Target_Angle_Speed)<SPEED_MAX_ANGLE_MM_S)
+				else if(fabs(Previous_Target_Angle_Speed)<SPEED_MAX_ANGLE_MM_S)
 				{// Acceleration phase
-					Target_Angle_Speed=abs(Previous_Target_Angle_Speed)+ACCELERATION_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
+					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)+ACCELERATION_MAX_ANGLE_MM_S2*LOOP_CONTROL_TIMING;
 				}
 				else
 				{//Constant speed phase

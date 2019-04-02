@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134226096</Address>
+          <Address>134227696</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134227040</Address>
+          <Address>134228640</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>2371</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134231298</Address>
+          <Address>134233174</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -296,7 +296,75 @@
           <WinNumber>2</WinNumber>
           <ItemText>Y_POS_MM,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>SPEED_MAX_DISTANCE_MM_S,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>SPEED_MAX_DISTANCE_MM_S_CACHE,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ACCELERATION_MAX_DISTANCE_MM_S2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ACCELERATION_MAX_DISTANCE_MM_S2_CACHE,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>BRAKING_MAX_DISTANCE_MM_S2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>BRAKING_MAX_DISTANCE_MM_S2_CACHE,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>SPEED_MAX_ANGLE_MM_S,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>SPEED_MAX_ANGLE_MM_S_CACHE,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ACCELERATION_MAX_ANGLE_MM_S2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ACCELERATION_MAX_ANGLE_MM_S2_CACHE,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>BRAKING_MAX_ANGLE_MM_S2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>BRAKING_MAX_ANGLE_MM_S2_CACHE,0x0A</ItemText>
+        </Ww>
       </WatchWindow2>
+      <MemoryWindow1>
+        <Mm>
+          <WinNumber>1</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>SPEED_MAX_DISTANCE_MM_S</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
