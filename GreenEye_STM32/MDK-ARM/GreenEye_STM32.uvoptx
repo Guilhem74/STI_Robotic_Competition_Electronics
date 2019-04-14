@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>353</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134234600</Address>
+          <Address>134234784</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134229576</Address>
+          <Address>134229760</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134230520</Address>
+          <Address>134230704</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -207,7 +207,7 @@
           <Type>0</Type>
           <LineNumber>2371</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134233574</Address>
+          <Address>134233758</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -223,7 +223,7 @@
           <Type>0</Type>
           <LineNumber>352</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134234588</Address>
+          <Address>134234772</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -315,6 +315,16 @@
           <count>15</count>
           <WinNumber>1</WinNumber>
           <ItemText>ANGLE_POS_DEG</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Target_Distance_Speed</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Previous_Target_Distance_Speed</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -442,6 +452,11 @@
           <count>24</count>
           <WinNumber>2</WinNumber>
           <ItemText>Y_DES_MM</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Error_Distance</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
