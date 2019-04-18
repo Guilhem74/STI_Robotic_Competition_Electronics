@@ -55,7 +55,7 @@ void String_Analysis(uint8_t* Input)
 				switch((int) Table_values[0])
 				{
 					case 0:
-						COMMAND_G0(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
+						COMMAND_G0(Table_Letter+1,Table_values+1,Parameters_N-1);//Set destination
 					break;
 					case 92:
 						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
@@ -69,13 +69,13 @@ void String_Analysis(uint8_t* Input)
 						COMMAND_M3(Table_Letter+1,Table_values+1,Parameters_N-1);//Enable position control
 						break;
 					case 92:
-						COMMAND_M92(Table_Letter+1,Table_values+1,Parameters_N-1);//Robot parameters.
+						COMMAND_M92(Table_Letter+1,Table_values+1,Parameters_N-1);//Robot parameters, wheel size...
 						break;
 					case 112:
 						COMMAND_M112(Table_Letter+1,Table_values+1,Parameters_N-1);//Emergency Stop
 						break;
 					case 135:
-						COMMAND_M135(Table_Letter+1,Table_values+1,Parameters_N-1);//Set loop interval
+						COMMAND_M135(Table_Letter+1,Table_values+1,Parameters_N-1);//Set loop interval (Doesn't modify the periodicity but the value used in the algorithm)
 						break;
 					case 201:
 						COMMAND_M201(Table_Letter+1,Table_values+1,Parameters_N-1);//Set acceleration, speed and braking parameters
@@ -142,7 +142,7 @@ void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	Transmit_UART(Answer);
 }
 void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
-{//G92 Xx Yx Ax
+{//G0 Xx Yx Ax
 	if(UPDATE_DEST_PARAMETERS==0)
 	{
 		ANGLE_DES_RAD_CACHE=ANGLE_DES_RAD;

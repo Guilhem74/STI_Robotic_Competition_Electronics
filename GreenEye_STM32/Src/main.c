@@ -98,9 +98,9 @@ static void MX_TIM9_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM2_Init(void);
-static void MX_TIM10_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -147,9 +147,9 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM5_Init();
   MX_TIM2_Init();
-  MX_TIM10_Init();
   MX_USART6_UART_Init();
   MX_USART2_UART_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start(&htim1);  //PA9 & PA8 for ch1 and ch2 of encoder by default
 	//HAL_TIM_Base_Start(&htim5);  //PA9 & PA8 for ch1 and ch2 of encoder by default
@@ -184,16 +184,17 @@ int main(void)
 
 	//	TIM2->CCR1=2100;
 	//	TIM2->CCR2=2100;
-		if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13)==0 && CONTROL_ENABLED==0)
+		if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13)==0 )
 		{
 			TIM2->CCR1=4199;
 			TIM2->CCR2=4199;
-		}else if( CONTROL_ENABLED==0)
+		}else 
 		{
 			TIM2->CCR1=0;
 			TIM2->CCR2=0;
 		}
 		Analyse_RX_Buffer();
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_RESET);
 	}
   /* USER CODE END 3 */
 }
@@ -591,9 +592,9 @@ static void MX_TIM10_Init(void)
 
   /* USER CODE END TIM10_Init 1 */
   htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 1;
+  htim10.Init.Prescaler = 19;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 42000-1;
+  htim10.Init.Period = 42300;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {

@@ -285,9 +285,9 @@ void TIM4_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
 	Sensor=htim3.Instance->CCR1;
-	uint8_t Answer[40];
-	sprintf((char*)Answer,"Sensor %d\r\n",Sensor);
-	Transmit_UART(Answer);
+	//uint8_t Answer[40];
+	//sprintf((char*)Answer,"Sensor %d\r\n",Sensor);
+	//Transmit_UART(Answer);
   /* USER CODE END TIM4_IRQn 1 */
 }
 
