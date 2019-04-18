@@ -51,6 +51,7 @@ void Control(void)
 				float ANGLE_POS_DEG=ANGLE_POS_RAD*180/PI;
 				X_POS_MM +=  Distance * cos(ANGLE_POS_RAD);
 				Y_POS_MM +=  Distance * sin(ANGLE_POS_RAD);
+				
 				/*END Localisaiton math*/
 				if(UPDATE_CONTROL_PARAMETERS)
 				{
@@ -89,6 +90,10 @@ void Control(void)
 					Error_Distance=0;
 					Error_Angle_Rad=ANGLE_DES_RAD-ANGLE_POS_RAD;
 				}
+				if(fabs(Error_Angle_Rad)*180/PI>20)//20 deg error
+				{//Do not correct for distance first
+					Error_Distance=0;
+				}
 				Error_Distance=Error_Distance*fabs(cos(Error_Angle_Rad));
 				while(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
@@ -113,23 +118,26 @@ void Control(void)
 				float Acceleration_Angle=fabs(Previous_Speed_Angle-Speed_Angle)*LOOP_CONTROL_TIMING_HZ;
 				float Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
 				float Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
-//				/* Distance Phase*/
+//			/* Distance Phase*/
 //				if(abs(Error_Distance)<(Distance_Braking+Distance_Braking*ANTICIPATION_PERCENTAGE))
 //				{//Braking phase we reduce the speed by an increment of 1
 //					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)-(float) BRAKING_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ;
+//					phase=1;
 //				}
 //				else if(fabs(Previous_Target_Distance_Speed)<SPEED_MAX_DISTANCE_MM_S)
 //				{// Acceleration phase
 //					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ;
+//					phase=2;
 //				}
 //				else
 //				{//Constant speed phase
 //					Target_Distance_Speed=SPEED_MAX_DISTANCE_MM_S;
+//					phase=3;
 //				}
-//				/*END Distance Phase*/
-//				
+				/*END Distance Phase*/
+				
 //				/* Angular Phase*/
-//				if(fabs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE))
+//				if(fabs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE)||)
 //				{//Braking phase we reduce the speed by an increment of 1
 //					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)-BRAKING_MAX_ANGLE_MM_S2/LOOP_CONTROL_TIMING_HZ;
 //				}
@@ -141,16 +149,14 @@ void Control(void)
 //				{//Constant speed phase
 //					Target_Angle_Speed=SPEED_MAX_ANGLE_MM_S;
 //				}
-//				/*END Angular Phase*/
-//				if(Error_Distance<0)
-//				{
-//					Target_Distance_Speed=-Target_Distance_Speed;
-//				}
 //				if(Error_Angle_Rad<0)
 //				{
 //					Target_Angle_Speed=-Target_Angle_Speed;
 //				}
-
+				
+				/*END Angular Phase*/
+				
+				
 				 int Target_DISTANCE_PID=(int)((Target_Distance_Speed*P_DISTANCE)+(Target_Distance_Speed-Previous_Target_Distance_Speed)*D_DISTANCE);
 				 int Target_ANGLE_PID=(int)((Target_Angle_Speed*P_ANGLE)+(Target_Angle_Speed-Previous_Target_Angle_Speed)*D_ANGLE);
 				 int Output_Right_Motor=(int)(Target_DISTANCE_PID+Target_ANGLE_PID);
@@ -182,7 +188,7 @@ void Control(void)
 				TIM2->CCR2=abs(Output_Right_Motor);
 				TIM2->CCR1=abs(Output_Left_Motor);
 				uint8_t Answer[40];
-				sprintf((char*)Answer,"PID : D:%d G:%d EA:%0.2f ED:%0.2f TargetSD:%0.2f \r\n",Output_Right_Motor,Output_Left_Motor,(Error_Angle_Rad*180)/3.14,Error_Distance,Target_Distance_Speed);
+				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f\r\n",Error_Distance,Error_Angle_Rad*180/PI,ANGLE_POS_RAD*180/PI);
 				Transmit_UART(Answer);
 				Previous_Error_Distance=Error_Distance;
 				Previous_Error_Angle_Rad=Error_Angle_Rad;

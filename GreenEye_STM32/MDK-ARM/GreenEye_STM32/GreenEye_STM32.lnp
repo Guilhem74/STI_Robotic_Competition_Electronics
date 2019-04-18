@@ -1,10 +1,10 @@
 --cpu=Cortex-M4.fp
 "greeneye_stm32\startup_stm32f401xe.o"
 "greeneye_stm32\communication_function.o"
+"greeneye_stm32\control_function.o"
 "greeneye_stm32\main.o"
 "greeneye_stm32\stm32f4xx_it.o"
 "greeneye_stm32\stm32f4xx_hal_msp.o"
-"greeneye_stm32\control_function.o"
 "greeneye_stm32\stm32f4xx_hal_tim.o"
 "greeneye_stm32\stm32f4xx_hal_tim_ex.o"
 "greeneye_stm32\stm32f4xx_hal_uart.o"
