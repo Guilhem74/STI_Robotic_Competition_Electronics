@@ -57,6 +57,9 @@ void String_Analysis(uint8_t* Input)
 					case 0:
 						COMMAND_G0(Table_Letter+1,Table_values+1,Parameters_N-1);//Set destination
 					break;
+					case 1:
+						COMMAND_G1(Table_Letter+1,Table_values+1,Parameters_N-1);//Set destination
+					break;
 					case 92:
 						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
 					break;
@@ -168,6 +171,28 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}
 	uint8_t Answer[40];
 	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_DEST_PARAMETERS=1;
+}
+void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//G1 Rx Ly
+
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'R':
+					R_SPEED_TARGET=Table_Parameters_Number[j];				
+					break;
+				case 'L':
+					L_SPEED_TARGET=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: D=%0.2f G=%0.2f \r\n",R_SPEED_TARGET,L_SPEED_TARGET);
 	Transmit_UART(Answer);
 	UPDATE_DEST_PARAMETERS=1;
 }
@@ -354,13 +379,13 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 						else if(Type==1)
 							P_ANGLE_CACHE=Table_Parameters_Number[j];	
 					break;
-				case 'I':
+				case 'D':
 						if(Type==0)
 							D_DISTANCE_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							D_ANGLE_CACHE=Table_Parameters_Number[j];	
 					break;
-				case 'D':
+				case 'I':
 						if(Type==0)
 							I_DISTANCE_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
@@ -371,9 +396,9 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	}
 	uint8_t Answer[40];
 	if(Type==0)//Distance PID selected
-		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,D_DISTANCE_CACHE,I_DISTANCE_CACHE);
+		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,I_DISTANCE_CACHE,D_DISTANCE_CACHE);
 	else if(Type==1)
-	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,D_ANGLE_CACHE,I_ANGLE_CACHE);
+	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,I_ANGLE_CACHE,D_ANGLE_CACHE);
 	else
 		sprintf((char*)Answer,"KO: No PID type selected (H0 or H1) \r\n");
 	Transmit_UART(Answer);

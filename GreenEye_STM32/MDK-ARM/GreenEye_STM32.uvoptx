@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134230152</Address>
+          <Address>134230000</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134231096</Address>
+          <Address>134230944</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>2371</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134234230</Address>
+          <Address>134234258</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -303,6 +303,31 @@
           <count>19</count>
           <WinNumber>1</WinNumber>
           <ItemText>Sensor,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>R_SPEED_TARGET</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Output_Right_Motor</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>I_DISTANCE</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>I_DISTANCE_CACHE</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>D_DISTANCE</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

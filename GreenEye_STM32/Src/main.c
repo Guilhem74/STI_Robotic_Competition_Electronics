@@ -184,15 +184,7 @@ int main(void)
 
 	//	TIM2->CCR1=2100;
 	//	TIM2->CCR2=2100;
-		if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13)==0 )
-		{
-			TIM2->CCR1=4199;
-			TIM2->CCR2=4199;
-		}else 
-		{
-			TIM2->CCR1=0;
-			TIM2->CCR2=0;
-		}
+
 		Analyse_RX_Buffer();
 		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_RESET);
 	}

@@ -1,16 +1,12 @@
 #include "Control_Function.h"
 #include "Communication_function.h"
 #include <math.h>
-
+float PID_R(float Error);
+float PID_L(float Error);
 void Control(void)
 {
 	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_SET);
-	static float Previous_Error_Distance=0;
-			static float Previous_Error_Angle_Rad=0;
-			static float Previous_Speed_Distance=0;
-			static float Previous_Speed_Angle=0;
-			static float Previous_Target_Distance_Speed=0;
-			static float Previous_Target_Angle_Speed=0;
+
 
 			if(UPDATE_DEST_PARAMETERS==1)
 			{//Command to change destination parameters
@@ -35,6 +31,22 @@ void Control(void)
 				Encoder_Left=TIM1->CNT;
 				int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
 				int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
+				#define Integrate_Speed_Size 10
+				static float Speed_R[Integrate_Speed_Size]={0};
+				static float Speed_L [Integrate_Speed_Size]={0};
+				static int i=0;
+				Speed_R[i]=Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
+				Speed_L[i]=Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
+				i=(i+1)%Integrate_Speed_Size;
+				float Speed_Average_R=0;
+				float Speed_Average_L=0;
+				for(int j=0;j<Integrate_Speed_Size;j++)
+				{
+					Speed_Average_R+=  Speed_R[j];
+					Speed_Average_L+=  Speed_L[j];
+				}
+				Speed_Average_R=Speed_Average_R/Integrate_Speed_Size;
+				Speed_Average_L=Speed_Average_L/Integrate_Speed_Size;
 				if(abs(Delta_Encoder_Right)>65535/4||abs(Delta_Encoder_Left)>65535/4)
 				{
 				//Probably sampling issues, overflowing/ missing steps seems ineluctable at that point.
@@ -69,12 +81,7 @@ void Control(void)
 				}
 				if(!CONTROL_ENABLED)
 				{
-					Previous_Error_Distance=0;
-					Previous_Error_Angle_Rad=0;
-					Previous_Speed_Distance=0;
-					Previous_Speed_Angle=0;
-				  Previous_Target_Distance_Speed=0;
-			    Previous_Target_Angle_Speed=0;
+
 					return;
 				}
 				int Error_X=(X_DES_MM-X_POS_MM);
@@ -97,68 +104,10 @@ void Control(void)
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
-				
-				float Target_Distance_Speed=Error_Distance;
-				float Target_Angle_Speed=Error_Angle_Rad;
-				float Speed_Distance=fabs(Previous_Error_Distance-Error_Distance)*LOOP_CONTROL_TIMING_HZ;
-				float Speed_Angle=fabs(Previous_Error_Angle_Rad-Error_Angle_Rad)*LOOP_CONTROL_TIMING_HZ;
-				float Acceleration_Distance=fabs(Previous_Speed_Distance-Speed_Distance)*LOOP_CONTROL_TIMING_HZ;
-				float Acceleration_Angle=fabs(Previous_Speed_Angle-Speed_Angle)*LOOP_CONTROL_TIMING_HZ;
-				float Distance_Braking=(Speed_Distance*Speed_Distance)/(2*BRAKING_MAX_DISTANCE_MM_S2);
-				float Angle_Braking=(Speed_Angle*Speed_Angle)/(2*BRAKING_MAX_ANGLE_MM_S2);
-			/* Distance Phase*/
-				if(fabs(Error_Distance)<(Distance_Braking+Distance_Braking*ANTICIPATION_PERCENTAGE))
-				{//Braking phase we reduce the speed by an increment of 1
-					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)-(float) (BRAKING_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ);
-				}
-				else if(fabs(Previous_Target_Distance_Speed)<SPEED_MAX_DISTANCE_MM_S)
-				{// Acceleration phase
-					Target_Distance_Speed=fabs(Previous_Target_Distance_Speed)+ACCELERATION_MAX_DISTANCE_MM_S2/LOOP_CONTROL_TIMING_HZ;
-				}
-				else
-				{//Constant speed phase
-					Target_Distance_Speed=SPEED_MAX_DISTANCE_MM_S;
-				}
-				/*END Distance Phase*/
-				
-				/* Angular Phase*/
-				if(fabs(Error_Angle_Rad)<(Angle_Braking+Angle_Braking*ANTICIPATION_PERCENTAGE))
-				{//Braking phase we reduce the speed by an increment of 1
-					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)-(float)(BRAKING_MAX_ANGLE_MM_S2/LOOP_CONTROL_TIMING_HZ);
-				}
-				else if(fabs(Previous_Target_Angle_Speed)<SPEED_MAX_ANGLE_MM_S)
-				{// Acceleration phase
-					Target_Angle_Speed=fabs(Previous_Target_Angle_Speed)+ACCELERATION_MAX_ANGLE_MM_S2/LOOP_CONTROL_TIMING_HZ;
-				}
-				else
-				{//Constant speed phase
-					Target_Angle_Speed=SPEED_MAX_ANGLE_MM_S;
-				}
-				
-				if(Error_Angle_Rad<0)
-				{
-					Target_Angle_Speed=-Target_Angle_Speed;
-				}
-				else if(fabs(Error_Angle_Rad)<PI/90)
-				{
-					Target_Angle_Speed=0;
-				}
-				
-				/*END Angular Phase*/
-				if(fabs(Error_Distance)<FINAL_BOOL_DISTANCE_MM )
-				{
-					Target_Distance_Speed=0;
-				}
-				else if(Error_Distance<0)
-				{
-					Target_Distance_Speed=-Target_Distance_Speed;
-				}
-				Target_Distance_Speed=100;
-				Target_Angle_Speed=0;
-				 int Target_DISTANCE_PID=(int)((Target_Distance_Speed*P_DISTANCE)+(Target_Distance_Speed-Previous_Target_Distance_Speed)*D_DISTANCE);
-				 int Target_ANGLE_PID=(int)((Target_Angle_Speed*P_ANGLE)+(Target_Angle_Speed-Previous_Target_Angle_Speed)*D_ANGLE);
-				 int Output_Right_Motor=(int)(Target_DISTANCE_PID+Target_ANGLE_PID);
-				 int Output_Left_Motor=(int)(Target_DISTANCE_PID-Target_ANGLE_PID);
+				 float Error_Speed_Right = R_SPEED_TARGET - Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
+				 float Error_Speed_Left = L_SPEED_TARGET - Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
+				 int Output_Right_Motor=PID_R(Error_Speed_Right);
+				 int Output_Left_Motor=PID_L(Error_Speed_Left);
 				if(Output_Right_Motor>4019)
 				{
 					Output_Right_Motor=4019;
@@ -186,12 +135,66 @@ void Control(void)
 				TIM2->CCR2=abs(Output_Right_Motor);
 				TIM2->CCR1=abs(Output_Left_Motor);
 				uint8_t Answer[40];
-				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;0.2f\r\n",Target_Distance_Speed+Target_Angle_Speed,Target_Distance_Speed-Target_Angle_Speed,Delta_Encoder_Right*LOOP_CONTROL_TIMING_HZ,Delta_Encoder_Left*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Output__Motor);
+				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%d;%d\r\n",R_SPEED_TARGET,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,L_SPEED_TARGET,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Output_Left_Motor);
 				Transmit_UART(Answer);
-				Previous_Error_Distance=Error_Distance;
-				Previous_Error_Angle_Rad=Error_Angle_Rad;
-				Previous_Speed_Distance=Speed_Distance;
-				Previous_Speed_Angle=Speed_Angle;
-				Previous_Target_Distance_Speed=Target_Distance_Speed;
-				Previous_Target_Angle_Speed=Target_Angle_Speed;
+
+}
+
+float PID_R(float Error) {
+  static float Previous_Error = 0;
+	static float Local_Error=0;
+	static float Previous_output=0;
+	Previous_Error=Local_Error;
+	Local_Error=Error;
+  float Delta_Error = Local_Error - Previous_Error; // D
+//  static int i=0;
+//	#define Integrator_Size 20
+//	float Sum_Error;
+//	static float Table_Error[Integrator_Size]={0};
+//	Table_Error[i]=Local_Error;
+//	i=(i+1)%Integrator_Size;
+//  for(int j=0;j<Integrator_Size;j++)
+//  {
+//    Sum_Error+=  Table_Error[j];
+//  }
+//	Sum_Error=Sum_Error/Integrator_Size;
+	float Output =
+      P_DISTANCE * Local_Error + I_DISTANCE * (Local_Error+Previous_output)  +
+      D_DISTANCE * Delta_Error; // On determine la commande a envoyer
+	Previous_output=Output;
+//	uint8_t Answer[40];
+//	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
+//	Transmit_UART(Answer);
+  
+
+  return Output;
+}
+float PID_L(float Error) {
+  static float Previous_Error = 0;
+	static float Local_Error=0;
+	static float Previous_output=0;
+	Previous_Error=Local_Error;
+	Local_Error=Error;
+  float Delta_Error = Local_Error - Previous_Error; // D
+//  static int i=0;
+//	#define Integrator_Size 20
+//	float Sum_Error;
+//	static float Table_Error[Integrator_Size]={0};
+//	Table_Error[i]=Local_Error;
+//	i=(i+1)%Integrator_Size;
+//  for(int j=0;j<Integrator_Size;j++)
+//  {
+//    Sum_Error+=  Table_Error[j];
+//  }
+//	Sum_Error=Sum_Error/Integrator_Size;
+	float Output =
+      P_DISTANCE * Local_Error + I_DISTANCE * (Local_Error+Previous_output)  +
+      D_DISTANCE * Delta_Error; // On determine la commande a envoyer
+	Previous_output=Output;
+//	uint8_t Answer[40];
+//	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
+//	Transmit_UART(Answer);
+  
+
+  return Output;
 }
