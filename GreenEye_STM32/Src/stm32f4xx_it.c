@@ -79,6 +79,8 @@
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim10;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
@@ -264,9 +266,7 @@ void ADC_IRQHandler(void)
   HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC_IRQn 1 */
 
-	uint8_t Answer[40];
-	sprintf((char*)Answer,"Sensor %d;%d \r\n",Result_ADC[0],Result_ADC[1]);
-	Transmit_UART(Answer);
+
 
   /* USER CODE END ADC_IRQn 1 */
 }
@@ -284,10 +284,27 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	}
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
+  HAL_TIM_IRQHandler(&htim10);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 	Control();
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM4 global interrupt.
+  */
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"Sensor %d;%d \r\n",Result_ADC[0],Result_ADC[1]);
+	Transmit_UART(Answer);
+  /* USER CODE END TIM4_IRQn 1 */
 }
 
 /**
