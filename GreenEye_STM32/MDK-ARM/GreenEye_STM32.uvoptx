@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134231368</Address>
+          <Address>134231164</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134232312</Address>
+          <Address>134232108</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>2371</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134235442</Address>
+          <Address>134235190</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -201,22 +201,6 @@
           <Filename>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\2371</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>267</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134220224</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Src/stm32f4xx_it.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\GreenEye_STM32\../Src/stm32f4xx_it.c\267</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -359,6 +343,11 @@
           <count>27</count>
           <WinNumber>1</WinNumber>
           <ItemText>Result_ADC</ItemText>
+        </Ww>
+        <Ww>
+          <count>28</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>hadc1</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

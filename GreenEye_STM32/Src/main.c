@@ -153,8 +153,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start(&htim1);  //PA9 & PA8 for ch1 and ch2 of encoder by default
 	//HAL_TIM_Base_Start(&htim5);  //PA9 & PA8 for ch1 and ch2 of encoder by default
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);// PWM Moteur
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);// PWM Moteur
+	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_4);//Conversion adc
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
@@ -260,7 +261,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ContinuousConvMode = DISABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISINGFALLING;
-  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_CC1;
+  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T2_CC4;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 2;
   hadc1.Init.DMAContinuousRequests = ENABLE;
@@ -280,7 +281,7 @@ static void MX_ADC1_Init(void)
   }
   /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
   */
-  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Channel = ADC_CHANNEL_5;
   sConfig.Rank = 2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -378,6 +379,10 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_OC_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
@@ -393,6 +398,11 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_TOGGLE;
+  if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
