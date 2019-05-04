@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "main.h"
 #include "Communication_function.h"
+#include <string.h>
 void Transmit_UART(uint8_t * T) ;
 void Analyse_RX_Buffer(void);
 int read_double(char *line, int *char_counter, float *double_ptr);

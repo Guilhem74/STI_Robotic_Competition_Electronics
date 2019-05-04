@@ -27,8 +27,8 @@ void Control(void)
 				/* Localisation math*/
 				Encoder_Right_Past=Encoder_Right;
 				Encoder_Left_Past=Encoder_Left;
-				Encoder_Right=TIM5->CNT;
-				Encoder_Left=TIM1->CNT;
+				Encoder_Right=TIM1->CNT;
+				Encoder_Left=TIM3->CNT;
 				int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
 				int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
 				#define Integrate_Speed_Size 10
@@ -108,34 +108,38 @@ void Control(void)
 				 float Error_Speed_Left = L_SPEED_TARGET - Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
 				 int Output_Right_Motor=PID_R(Error_Speed_Right);
 				 int Output_Left_Motor=PID_L(Error_Speed_Left);
-				if(Output_Right_Motor>4019)
+				if((R_SPEED_TARGET>0 && Output_Right_Motor<0)||(R_SPEED_TARGET<0 && Output_Right_Motor>0))
+					Output_Right_Motor=0;
+				if((L_SPEED_TARGET>0 && Output_Left_Motor<0)||(L_SPEED_TARGET<0 && Output_Left_Motor>0))
+					Output_Left_Motor=0;
+				if(Output_Right_Motor>2100)
 				{
-					Output_Right_Motor=4019;
+					Output_Right_Motor=2100;
 				}
-				else if(Output_Right_Motor<-4019)
+				else if(Output_Right_Motor<-2100)
 				{
-					Output_Right_Motor=-4019;
+					Output_Right_Motor=-2100;
 				}
-				if(Output_Left_Motor>4019)
+				if(Output_Left_Motor>2100)
 				{
-					Output_Left_Motor=4019;
+					Output_Left_Motor=2100;
 				}
-				else if(Output_Left_Motor<-4019)
+				else if(Output_Left_Motor<-2100)
 				{
-					Output_Left_Motor=-4019;
+					Output_Left_Motor=-2100;
 				}
 				if(Output_Right_Motor>0)
-					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
-				else
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
+				else
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
 				if(Output_Left_Motor>0)
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_RESET);
 				else
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_SET);
 				TIM2->CCR2=abs(Output_Right_Motor);
-				TIM2->CCR1=abs(Output_Left_Motor);
+				TIM2->CCR3=abs(Output_Left_Motor);
 				uint8_t Answer[40];
-				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%d;%d\r\n",R_SPEED_TARGET,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,L_SPEED_TARGET,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Output_Left_Motor);
+				sprintf((char*)Answer,"%0.2f;%0.2f;%d;%0.2f;%d\r\n",R_SPEED_TARGET,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor);
 				Transmit_UART(Answer);
 
 }
