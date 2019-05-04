@@ -3,7 +3,7 @@
 <title>Static Call Graph - [GreenEye_STM32\GreenEye_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image GreenEye_STM32\GreenEye_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri May 03 21:09:54 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat May 04 19:40:32 2019
 <BR><P>
 <H3>Maximum Stack Usage =        408 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -774,7 +774,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_IRQHandler
 </UL>
 
-<P><STRONG><a name="[89]"></a>HAL_ADC_MspInit</STRONG> (Thumb, 148 bytes, Stack size 40 bytes, stm32f4xx_hal_msp.o(i.HAL_ADC_MspInit))
+<P><STRONG><a name="[89]"></a>HAL_ADC_MspInit</STRONG> (Thumb, 206 bytes, Stack size 40 bytes, stm32f4xx_hal_msp.o(i.HAL_ADC_MspInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = HAL_ADC_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SetPriority
@@ -1340,12 +1340,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xe.o(RESET)
 </UL>
-<P><STRONG><a name="[25]"></a>TIM4_IRQHandler</STRONG> (Thumb, 34 bytes, Stack size 48 bytes, stm32f4xx_it.o(i.TIM4_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = TIM4_IRQHandler &rArr; Transmit_UART &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[25]"></a>TIM4_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.TIM4_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM4_IRQHandler &rArr; HAL_TIM_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_IRQHandler
-<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Transmit_UART
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xe.o(RESET)
 </UL>
@@ -1381,8 +1379,7 @@ Global Symbols
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcpy
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>
-<BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM4_IRQHandler
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;String_Analysis
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;COMMAND_O1
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;COMMAND_M92
@@ -1432,8 +1429,7 @@ Global Symbols
 <P><STRONG><a name="[71]"></a>__2sprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0sprintf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __2sprintf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM4_IRQHandler
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;String_Analysis
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;COMMAND_O1
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;COMMAND_M92
@@ -1725,7 +1721,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d8]"></a>MX_TIM2_Init</STRONG> (Thumb, 142 bytes, Stack size 64 bytes, main.o(i.MX_TIM2_Init))
+<P><STRONG><a name="[d8]"></a>MX_TIM2_Init</STRONG> (Thumb, 144 bytes, Stack size 64 bytes, main.o(i.MX_TIM2_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = MX_TIM2_Init &rArr; HAL_TIM_MspPostInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_Init

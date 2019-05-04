@@ -108,30 +108,30 @@ void Control(void)
 				 float Error_Speed_Left = L_SPEED_TARGET - Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
 				 int Output_Right_Motor=PID_R(Error_Speed_Right);
 				 int Output_Left_Motor=PID_L(Error_Speed_Left);
-				if((R_SPEED_TARGET>0 && Output_Right_Motor<0)||R_SPEED_TARGET<0 && Output_Right_Motor>0)
+				if((R_SPEED_TARGET>0 && Output_Right_Motor<0)||(R_SPEED_TARGET<0 && Output_Right_Motor>0))
 					Output_Right_Motor=0;
-				if((L_SPEED_TARGET>0 && Output_Left_Motor<0)||L_SPEED_TARGET<0 && Output_Left_Motor>0)
+				if((L_SPEED_TARGET>0 && Output_Left_Motor<0)||(L_SPEED_TARGET<0 && Output_Left_Motor>0))
 					Output_Left_Motor=0;
-				if(Output_Right_Motor>4019)
+				if(Output_Right_Motor>2100)
 				{
-					Output_Right_Motor=4019;
+					Output_Right_Motor=2100;
 				}
-				else if(Output_Right_Motor<-4019)
+				else if(Output_Right_Motor<-2100)
 				{
-					Output_Right_Motor=-4019;
+					Output_Right_Motor=-2100;
 				}
-				if(Output_Left_Motor>4019)
+				if(Output_Left_Motor>2100)
 				{
-					Output_Left_Motor=4019;
+					Output_Left_Motor=2100;
 				}
-				else if(Output_Left_Motor<-4019)
+				else if(Output_Left_Motor<-2100)
 				{
-					Output_Left_Motor=-4019;
+					Output_Left_Motor=-2100;
 				}
 				if(Output_Right_Motor>0)
-					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
-				else
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
+				else
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
 				if(Output_Left_Motor>0)
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_RESET);
 				else

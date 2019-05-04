@@ -117,6 +117,7 @@ static void MX_TIM10_Init(void);
   * @retval int
   */
 int main(void)
+
 {
   /* USER CODE BEGIN 1 */
 
@@ -183,11 +184,12 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	//	TIM2->CCR1=2100;
-	//	TIM2->CCR2=2100;
+	//TIM2->CCR2=abs(Output_Right_Motor);
+					//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
+
 
 		Analyse_RX_Buffer();
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_SET);
 	}
   /* USER CODE END 3 */
 }
@@ -363,8 +365,8 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4200-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
+  htim2.Init.Period = 2100;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
