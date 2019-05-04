@@ -117,7 +117,6 @@ static void MX_TIM10_Init(void);
   * @retval int
   */
 int main(void)
-
 {
   /* USER CODE BEGIN 1 */
 
