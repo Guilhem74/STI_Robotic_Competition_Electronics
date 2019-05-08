@@ -188,12 +188,12 @@ int main(void)
 		if(	HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13))
 		{
 			R_SPEED_TARGET=1500;
-			L_SPEED_TARGET=1400;
+			L_SPEED_TARGET=2100;
 		}
 		else
 		{
-			R_SPEED_TARGET=1500;
-			L_SPEED_TARGET=2100;
+			R_SPEED_TARGET=-1500;
+			L_SPEED_TARGET=-2100;
 		}
 		Analyse_RX_Buffer();
 		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_SET);

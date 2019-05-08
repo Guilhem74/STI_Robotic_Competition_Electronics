@@ -16,7 +16,7 @@ extern uint8_t Indice_Start_TX,Indice_Stop_TX;
 extern uint8_t Indice_Start_TX_UART2,Indice_Stop_TX_UART2;
 
 extern uint16_t Sensor;
-extern uint32_t Result_ADC[2];
+extern uint32_t Result_ADC[13];
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;

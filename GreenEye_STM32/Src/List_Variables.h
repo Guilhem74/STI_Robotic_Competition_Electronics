@@ -19,7 +19,7 @@ uint8_t Indice_Start_RX_UART2=0,Indice_Stop_RX_UART2=0;
 uint8_t Indice_Start_TX_UART2=0,Indice_Stop_TX_UART2=0; 
 
 uint16_t Sensor=0;
-uint32_t Result_ADC[2]={0};
+uint32_t Result_ADC[13]={0};
 /* Robot localization Variables*/
 int16_t Encoder_Right_Past=0,Encoder_Right=0,Encoder_Left_Past=0,Encoder_Left=0;
 float ANGLE_POS_RAD=0,X_POS_MM=0,Y_POS_MM=0;
