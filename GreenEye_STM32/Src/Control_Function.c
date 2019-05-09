@@ -72,9 +72,9 @@ void Control(void)
 					ACCELERATION_MAX_ANGLE_MM_S2 = ACCELERATION_MAX_ANGLE_MM_S2_CACHE ;
 					BRAKING_MAX_ANGLE_MM_S2 = BRAKING_MAX_ANGLE_MM_S2_CACHE ;
 					ANTICIPATION_PERCENTAGE = ANTICIPATION_PERCENTAGE_CACHE;
-					P_DISTANCE=P_DISTANCE_CACHE;
-					I_DISTANCE=I_DISTANCE_CACHE;
-					D_DISTANCE=D_DISTANCE_CACHE;
+					P_SPEED=P_SPEED_CACHE;
+					I_SPEED=I_SPEED_CACHE;
+					D_SPEED=D_SPEED_CACHE;
 					P_ANGLE=P_ANGLE_CACHE;
 					I_ANGLE=I_ANGLE_CACHE;
 					D_ANGLE=D_ANGLE_CACHE;
@@ -86,32 +86,61 @@ void Control(void)
 				}
 				int Error_X=(X_DES_MM-X_POS_MM);
 				int Error_Y=(Y_DES_MM-Y_POS_MM);
-				float Error_Angle_Rad=atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
+				float Error_Angle_Rad=ANGLE_DES_RAD-ANGLE_POS_RAD;//atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
 				float Error_Distance=sqrt(Error_X*Error_X+Error_Y*Error_Y);
 				while(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
 				Error_Distance=Error_Distance*fabs(cos(Error_Angle_Rad));
-				if(Error_Angle_Rad>PI/2||Error_Angle_Rad<-PI/2)//Backward move
-				{
-					Error_Distance=-Error_Distance;
-					Error_Angle_Rad+=PI;
-				}
+//				if(Error_Angle_Rad>PI/2||Error_Angle_Rad<-PI/2)//Backward move
+//				{
+//					Error_Distance=-Error_Distance;
+//					Error_Angle_Rad+=PI;
+//				}
 
 
 				while(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
+				float Error_Angle_Deg=Error_Angle_Rad*(180/PI);
+				Error_Distance=0;
+				
+				//R_SPEED_TARGET=+Error_Angle_Deg*P_ANGLE;
+				//L_SPEED_TARGET=-Error_Angle_Deg*P_ANGLE;
+				if(fabs(R_SPEED_TARGET)<20)
+					R_SPEED_TARGET=0;
+				if(fabs(L_SPEED_TARGET)<20)
+					L_SPEED_TARGET=0;
+				/* SPEED Regulation Part*/
+				// 09/05/2019 PID with a speed coeff of 1.5 and P10 I1 D0
 				 float Error_Speed_Right = R_SPEED_TARGET - Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
 				 float Error_Speed_Left = L_SPEED_TARGET - Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
-				 int Output_Right_Motor=PID_R(Error_Speed_Right);
-				 int Output_Left_Motor=PID_L(Error_Speed_Left);
-				if((R_SPEED_TARGET>0 && Output_Right_Motor<0)||(R_SPEED_TARGET<0 && Output_Right_Motor>0))
-					Output_Right_Motor=0;
-				if((L_SPEED_TARGET>0 && Output_Left_Motor<0)||(L_SPEED_TARGET<0 && Output_Left_Motor>0))
-					Output_Left_Motor=0;
+				 
+				 float Output_PID_R=PID_R(Error_Speed_Right);
+				 float Output_PID_L=PID_L(Error_Speed_Left);
+				float Speed_to_PWM_Coeff=1.5;
+				if(Output_PID_R<0 && R_SPEED_TARGET>0&& Output_PID_R<-R_SPEED_TARGET*Speed_to_PWM_Coeff)
+				{//Bigger and opposite -> Limit
+					Output_PID_R=-R_SPEED_TARGET*Speed_to_PWM_Coeff;
+				}
+				else if(Output_PID_R>0 && R_SPEED_TARGET<0&& Output_PID_R>-R_SPEED_TARGET*Speed_to_PWM_Coeff)
+				{//Bigger and opposite -> Limit
+					Output_PID_R=-R_SPEED_TARGET*Speed_to_PWM_Coeff;
+				}
+				if(Output_PID_L<0 && L_SPEED_TARGET>0&& Output_PID_L<-L_SPEED_TARGET*Speed_to_PWM_Coeff)
+				{//Bigger and opposite -> Limit
+					Output_PID_L=-L_SPEED_TARGET*Speed_to_PWM_Coeff;
+				}
+				else if(Output_PID_L>0 && L_SPEED_TARGET<0&& Output_PID_L>-L_SPEED_TARGET*Speed_to_PWM_Coeff)
+				{//Bigger and opposite -> Limit
+					Output_PID_L=-L_SPEED_TARGET*Speed_to_PWM_Coeff;
+				}
+				float Output_Right_Motor=Output_PID_R; 
+				float Output_Left_Motor=Output_PID_L;
+				Output_Right_Motor+=R_SPEED_TARGET*Speed_to_PWM_Coeff;
+				Output_Left_Motor+=L_SPEED_TARGET*Speed_to_PWM_Coeff;
 				if(Output_Right_Motor>2100)
 				{
 					Output_Right_Motor=2100;
@@ -128,6 +157,10 @@ void Control(void)
 				{
 					Output_Left_Motor=-2100;
 				}
+				uint8_t Answer[40];
+				//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Error_Angle_Deg);
+				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,R_SPEED_TARGET*Speed_to_PWM_Coeff);
+				Transmit_UART(Answer);
 				if(Output_Right_Motor>0)
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_SET);
 				else
@@ -136,36 +169,32 @@ void Control(void)
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_RESET);
 				else
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_SET);
-				TIM2->CCR2=abs(Output_Right_Motor);
-				TIM2->CCR3=abs(Output_Left_Motor);
-				uint8_t Answer[40];
-				sprintf((char*)Answer,"%0.2f;%0.2f;%d;%0.2f;%d\r\n",R_SPEED_TARGET,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor);
-				//Transmit_UART(Answer);
+				TIM2->CCR2=(int) fabs(Output_Right_Motor);
+				TIM2->CCR3=(int) fabs(Output_Left_Motor);
+				
 
 }
 
 float PID_R(float Error) {
   static float Previous_Error = 0;
 	static float Local_Error=0;
-	static float Previous_output=0;
 	Previous_Error=Local_Error;
 	Local_Error=Error;
   float Delta_Error = Local_Error - Previous_Error; // D
-//  static int i=0;
-//	#define Integrator_Size 20
-//	float Sum_Error;
-//	static float Table_Error[Integrator_Size]={0};
-//	Table_Error[i]=Local_Error;
-//	i=(i+1)%Integrator_Size;
-//  for(int j=0;j<Integrator_Size;j++)
-//  {
-//    Sum_Error+=  Table_Error[j];
-//  }
-//	Sum_Error=Sum_Error/Integrator_Size;
+  static int i=0;
+	#define Integrator_Size 5
+	float Sum_Error;
+	static float Table_Error[Integrator_Size]={0};
+	Table_Error[i]=Local_Error;
+	i=(i+1)%Integrator_Size;
+ for(int j=0;j<Integrator_Size;j++)
+  {
+	  Sum_Error+=  Table_Error[j];
+  }
+	Sum_Error=Sum_Error/Integrator_Size;
 	float Output =
-      P_DISTANCE * Local_Error + I_DISTANCE * (Local_Error+Previous_output)  +
-      D_DISTANCE * Delta_Error; // On determine la commande a envoyer
-	Previous_output=Output;
+      P_SPEED * Local_Error + I_SPEED * (Sum_Error)  +
+      D_SPEED * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART(Answer);
@@ -176,25 +205,23 @@ float PID_R(float Error) {
 float PID_L(float Error) {
   static float Previous_Error = 0;
 	static float Local_Error=0;
-	static float Previous_output=0;
 	Previous_Error=Local_Error;
 	Local_Error=Error;
   float Delta_Error = Local_Error - Previous_Error; // D
-//  static int i=0;
-//	#define Integrator_Size 20
-//	float Sum_Error;
-//	static float Table_Error[Integrator_Size]={0};
-//	Table_Error[i]=Local_Error;
-//	i=(i+1)%Integrator_Size;
-//  for(int j=0;j<Integrator_Size;j++)
-//  {
-//    Sum_Error+=  Table_Error[j];
-//  }
-//	Sum_Error=Sum_Error/Integrator_Size;
+  static int i=0;
+	#define Integrator_Size 5
+	float Sum_Error;
+	static float Table_Error[Integrator_Size]={0};
+	Table_Error[i]=Local_Error;
+	i=(i+1)%Integrator_Size;
+  for(int j=0;j<Integrator_Size;j++)
+  {
+    Sum_Error+=  Table_Error[j];
+  }
+	Sum_Error=Sum_Error/Integrator_Size;
 	float Output =
-      P_DISTANCE * Local_Error + I_DISTANCE * (Local_Error+Previous_output)  +
-      D_DISTANCE * Delta_Error; // On determine la commande a envoyer
-	Previous_output=Output;
+      P_SPEED * Local_Error + I_SPEED * Sum_Error  +
+      D_SPEED * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART(Answer);

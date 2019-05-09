@@ -357,9 +357,9 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 {// M301 H0/1 Px Ix Dx
 	if(UPDATE_CONTROL_PARAMETERS==0)
 	{
-		P_DISTANCE_CACHE= P_DISTANCE;
-		I_DISTANCE_CACHE= I_DISTANCE;
-		D_DISTANCE_CACHE= D_DISTANCE;
+		P_SPEED_CACHE= P_SPEED;
+		I_SPEED_CACHE= I_SPEED;
+		D_SPEED_CACHE= D_SPEED;
 		P_ANGLE_CACHE= P_ANGLE;
 		I_ANGLE_CACHE= I_ANGLE;
 		D_ANGLE_CACHE= D_ANGLE;
@@ -375,19 +375,19 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 					break;
 				case 'P':
 						if(Type==0)
-							P_DISTANCE_CACHE=Table_Parameters_Number[j];
+							P_SPEED_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							P_ANGLE_CACHE=Table_Parameters_Number[j];	
 					break;
 				case 'D':
 						if(Type==0)
-							D_DISTANCE_CACHE=Table_Parameters_Number[j];
+							D_SPEED_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							D_ANGLE_CACHE=Table_Parameters_Number[j];	
 					break;
 				case 'I':
 						if(Type==0)
-							I_DISTANCE_CACHE=Table_Parameters_Number[j];
+							I_SPEED_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							I_ANGLE_CACHE=Table_Parameters_Number[j];
 					break;
@@ -396,7 +396,7 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	}
 	uint8_t Answer[40];
 	if(Type==0)//Distance PID selected
-		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,I_DISTANCE_CACHE,D_DISTANCE_CACHE);
+		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_SPEED_CACHE,I_SPEED_CACHE,D_SPEED_CACHE);
 	else if(Type==1)
 	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,I_ANGLE_CACHE,D_ANGLE_CACHE);
 	else

@@ -301,9 +301,16 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
-	uint8_t Answer[40];
-	sprintf((char*)Answer,"Sensor %d;%d;%d;%d;%d;%d;%d\r\n",Result_ADC[0],Result_ADC[1],Result_ADC[2],Result_ADC[3],Result_ADC[4],Result_ADC[5],Result_ADC[6]);
-	Transmit_UART(Answer);
+	uint8_t Answer[40]="S: ";
+	for(int i=0;i<13;i++)
+	{
+		if(Result_ADC[i]>1500)
+		{
+			sprintf((char*)Answer,"S:%c: %d\r\n",i+65,Result_ADC[i]);
+				//Transmit_UART(Answer);
+		}
+	}
+	
   /* USER CODE END TIM4_IRQn 1 */
 }
 
