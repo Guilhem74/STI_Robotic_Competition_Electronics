@@ -77,6 +77,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim9;
 TIM_HandleTypeDef htim10;
+TIM_HandleTypeDef htim11;
 
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart6;
@@ -102,6 +103,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM10_Init(void);
+static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -150,6 +152,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
   MX_TIM10_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start(&htim1);  //PA9 & PA8 for ch1 and ch2 of encoder by default
 	//HAL_TIM_Base_Start(&htim5);  //PA9 & PA8 for ch1 and ch2 of encoder by default
@@ -159,8 +162,8 @@ int main(void)
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
-	HAL_TIM_Base_Start_IT(&htim10); 
-
+	HAL_TIM_Base_Start_IT(&htim10); // 100 hz interrupt
+	HAL_TIM_Base_Start_IT(&htim11); //  hz interrupt
 	HAL_ADC_Start_DMA(&hadc1,Result_ADC,13);
 	__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);   // Enable IDLE Line Interrupt
 	__HAL_DMA_ENABLE_IT (&hdma_usart6_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
@@ -188,7 +191,6 @@ int main(void)
 
 
 		Analyse_RX_Buffer();
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_SET);
 	}
   /* USER CODE END 3 */
 }
@@ -661,6 +663,36 @@ static void MX_TIM10_Init(void)
   /* USER CODE BEGIN TIM10_Init 2 */
 
   /* USER CODE END TIM10_Init 2 */
+
+}
+
+/**
+  * @brief TIM11 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM11_Init(void)
+{
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  htim11.Instance = TIM11;
+  htim11.Init.Prescaler = 0;
+  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim11.Init.Period = 21000;
+  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
 
 }
 
