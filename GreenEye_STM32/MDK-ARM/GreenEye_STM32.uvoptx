@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134232364</Address>
+          <Address>134232336</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134233308</Address>
+          <Address>134233280</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +191,7 @@
           <Type>0</Type>
           <LineNumber>2371</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134236946</Address>
+          <Address>134236814</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -201,6 +201,22 @@
           <Filename>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\2371</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>351</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134220804</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\Control_Function.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GreenEye_STM32\../Src/Control_Function.c\351</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -342,7 +358,7 @@
         <Ww>
           <count>27</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Result_ADC</ItemText>
+          <ItemText>Result_ADC,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>28</count>

@@ -136,6 +136,7 @@ void Control(void)//100hz
 					STATUS_BOOL_2=0;
 				}
 				float Error_Angle_Deg=Error_Angle_Rad*(180/PI);
+				Avoidance(&Error_Distance,&Error_Angle_Deg);
 				float Output_Angle=PID_ANGLE(Error_Angle_Deg);
 				float Output_Distance=PID_DISTANCE(Error_Distance);
 				if(Output_Distance> SPEED_MAX_DISTANCE_MM_S)
@@ -177,7 +178,7 @@ void Control(void)//100hz
 							Output_PID_R=PID_R(Error_Speed_Right);
 							Output_PID_L=PID_L(Error_Speed_Left);
 						uint8_t Answer[40];
-						sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Error_Distance,Error_Angle_Rad,Output_PID_R,Output_PID_L);
+						//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Error_Distance,Error_Angle_Rad,Output_PID_R,Output_PID_L);
 						Transmit_UART(Answer);
 						 break;
 				}
@@ -233,6 +234,8 @@ void Control(void)//100hz
 				//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Error_Angle_Deg);
 				//
 
+				
+				
 }
 
 float PID_R(float Error) {
@@ -342,4 +345,19 @@ float PID_DISTANCE(float Error) {
 //	Transmit_UART(Answer);
   
   return Output;
+}
+float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
+{
+	if(*Error_Distance>0 && (Result_ADC[11]>1500 ||  Result_ADC[12]>1500 || Result_ADC[10]>1500))
+	{
+		*Error_Distance=0;
+
+	}
+	else if(*Error_Distance<0 && (Result_ADC[0]>1500 ||  Result_ADC[1]>1500 || Result_ADC[2]>1500 || Result_ADC[3]>1500))
+	{
+		*Error_Distance=0;
+
+	}
+
+	return 0.0;
 }

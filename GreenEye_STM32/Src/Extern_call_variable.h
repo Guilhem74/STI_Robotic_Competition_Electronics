@@ -15,6 +15,7 @@ extern uint8_t Indice_Start_RX_UART2,Indice_Stop_RX_UART2;
 extern uint8_t Indice_Start_TX,Indice_Stop_TX;
 extern uint8_t Indice_Start_TX_UART2,Indice_Stop_TX_UART2;
 typedef enum CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}CONTROL_TYPE;
+typedef enum Sensors_Letter {A, B, C,D,E,F,G,H,I,J,K,L,M}Sensors_Letter;
 
 extern float SPEED_R_DES,SPEED_R_DES_CACHE;
 extern float SPEED_L_DES,SPEED_L_DES_CACHE;
@@ -22,7 +23,7 @@ extern float PWM_R_DES,PWM_R_DES_CACHE;
 extern float PWM_L_DES,PWM_L_DES_CACHE;
 extern float TIMEOUT_MS,TIMEOUT_MS_CACHE;
 extern uint16_t Sensor;
-extern uint32_t Result_ADC[13];
+extern uint32_t Result_ADC[14];
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;

@@ -79,7 +79,6 @@
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim10;
 extern TIM_HandleTypeDef htim11;
 extern DMA_HandleTypeDef hdma_usart2_rx;
@@ -309,29 +308,6 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles TIM4 global interrupt.
-  */
-void TIM4_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM4_IRQn 0 */
-
-  /* USER CODE END TIM4_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim4);
-  /* USER CODE BEGIN TIM4_IRQn 1 */
-//	uint8_t Answer[40]="S: ";
-//	for(int i=0;i<13;i++)
-//	{
-//		if(Result_ADC[i]>1500)
-//		{
-//			sprintf((char*)Answer,"S:%c: %d\r\n",i+65,Result_ADC[i]);
-//				//Transmit_UART(Answer);
-//		}
-//	}
-	
-  /* USER CODE END TIM4_IRQn 1 */
-}
-
-/**
   * @brief This function handles USART2 global interrupt.
   */
 void USART2_IRQHandler(void)
@@ -363,7 +339,6 @@ void DMA2_Stream0_IRQHandler(void)
   /* USER CODE END DMA2_Stream0_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
-
   /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
 
