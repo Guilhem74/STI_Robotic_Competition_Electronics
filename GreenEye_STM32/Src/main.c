@@ -87,6 +87,7 @@ DMA_HandleTypeDef hdma_usart6_rx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
+CONTROL_TYPE REGULATOR=No_Control,REGULATOR_CACHE=No_Control;
 
 /* USER CODE END PV */
 
@@ -173,7 +174,6 @@ int main(void)
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 	HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
-	
 
   /* USER CODE END 2 */
 

@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"
-#include "Communication_function.h"
 #include <string.h>
 void Transmit_UART(uint8_t * T) ;
 void Analyse_RX_Buffer(void);
@@ -17,8 +16,9 @@ void String_Analysis(uint8_t* Input);
 void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );
 void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//POsition target
 void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Speed target
+void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Set PWM 
 void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Set actual position
-void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Activate position control
+void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Activate type of control
 void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );
 void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Emergency stop
 void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Control loop timing interval

@@ -8,6 +8,8 @@ void Control(void);
 float PID_ANGLE(float Error);
 float PID_R(float Error);
 float PID_L(float Error);
+float PID_DISTANCE(float Error);
+
 void Update_POS(void);
 
 #endif

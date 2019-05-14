@@ -37,5 +37,4 @@ greeneye_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 greeneye_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 greeneye_stm32\main.o: ../Src/Communication_function.h
 greeneye_stm32\main.o: ../Src/Extern_call_variable.h
-greeneye_stm32\main.o: ../Src/Communication_function.h
 greeneye_stm32\main.o: ../Src/List_Variables.h

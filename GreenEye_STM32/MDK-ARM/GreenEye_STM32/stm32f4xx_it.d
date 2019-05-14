@@ -37,6 +37,5 @@ greeneye_stm32\stm32f4xx_it.o: ../Inc/stm32f4xx_it.h
 greeneye_stm32\stm32f4xx_it.o: ../Src/Extern_call_variable.h
 greeneye_stm32\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 greeneye_stm32\stm32f4xx_it.o: ../Src/Communication_function.h
-greeneye_stm32\stm32f4xx_it.o: ../Src/Communication_function.h
 greeneye_stm32\stm32f4xx_it.o: ../Src/Control_function.h
 greeneye_stm32\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

@@ -345,7 +345,7 @@ void USART2_IRQHandler(void)
 		{//Got some delay in the communication, time to check if the frame is full
 			//Store what has been received
 			//Restart DMA
-			Indice_Stop_RX_UART2=(Indice_Stop_RX_UART2+1)%SIZE_BUFFER;
+			Indice_Stop_RX_UART2=(Indice_Stop_RX_UART2+1)%(SIZE_BUFFER);
 			HAL_UART_DMAStop(&huart2);
 			HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
 			__HAL_UART_CLEAR_IDLEFLAG (&huart2);
@@ -405,7 +405,7 @@ void USART6_IRQHandler(void)
 		{//Got some delay in the communication, time to check if the frame is full
 			//Store what has been received
 			//Restart DMA
-			Indice_Stop_RX=(Indice_Stop_RX+1)%SIZE_BUFFER;
+			Indice_Stop_RX=(Indice_Stop_RX+1)%(SIZE_BUFFER);
 			HAL_UART_DMAStop(&huart6);
 			HAL_UART_Receive_DMA (&huart6, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
 			__HAL_UART_CLEAR_IDLEFLAG (&huart6);
@@ -423,7 +423,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {//End of TX transmission
     if (huart->Instance == USART6)  // change USART instance
     {
-			Indice_Start_TX=(Indice_Start_TX+1)%SIZE_BUFFER;
+			Indice_Start_TX=(Indice_Start_TX+1)%(SIZE_BUFFER);
 			if(Indice_Start_TX!=Indice_Stop_TX && huart6.gState == HAL_UART_STATE_READY)
 			{
 				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
@@ -432,7 +432,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     }
 		if (huart->Instance == USART2)  // change USART instance
     {
-			Indice_Start_TX_UART2=(Indice_Start_TX_UART2+1)%SIZE_BUFFER;
+			Indice_Start_TX_UART2=(Indice_Start_TX_UART2+1)%(SIZE_BUFFER);
 			if(Indice_Start_TX_UART2!=Indice_Stop_TX_UART2 && huart2.gState == HAL_UART_STATE_READY)
 			{
 				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX_UART2[Indice_Start_TX_UART2],strlen((char*)BUFFER_TX_UART2[Indice_Start_TX_UART2]));
