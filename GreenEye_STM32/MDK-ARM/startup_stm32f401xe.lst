@@ -473,7 +473,7 @@ ARM Macro Assembler    Page 8
   187 00000000                 IMPORT           SystemInit
   188 00000000                 IMPORT           __main
   189 00000000         
-  190 00000000 4806            LDR              R0, =SystemInit
+  190 00000000 4806    TrR     LDR              R0, =SystemInit
   191 00000002 4780            BLX              R0
   192 00000004 4806            LDR              R0, =__main
   193 00000006 4700            BX               R0
@@ -1493,6 +1493,14 @@ Symbol: TIM5_IRQHandler
       At line 142 in file startup_stm32f401xe.s
       At line 282 in file startup_stm32f401xe.s
 
+TrR 00000000
+
+Symbol: TrR
+   Definitions
+      At line 190 in file startup_stm32f401xe.s
+   Uses
+      None
+Comment: TrR unused
 USART1_IRQHandler 0000001A
 
 Symbol: USART1_IRQHandler
@@ -1511,6 +1519,12 @@ Symbol: USART2_IRQHandler
       At line 130 in file startup_stm32f401xe.s
       At line 276 in file startup_stm32f401xe.s
 
+
+
+ARM Macro Assembler    Page 11 Alphabetic symbol ordering
+Relocatable symbols
+
+
 USART6_IRQHandler 0000001A
 
 Symbol: USART6_IRQHandler
@@ -1518,12 +1532,6 @@ Symbol: USART6_IRQHandler
       At line 350 in file startup_stm32f401xe.s
    Uses
       At line 163 in file startup_stm32f401xe.s
-
-
-
-ARM Macro Assembler    Page 11 Alphabetic symbol ordering
-Relocatable symbols
-
       At line 293 in file startup_stm32f401xe.s
 
 UsageFault_Handler 00000010
@@ -1544,7 +1552,7 @@ Symbol: WWDG_IRQHandler
       At line 92 in file startup_stm32f401xe.s
       At line 242 in file startup_stm32f401xe.s
 
-68 symbols
+69 symbols
 
 
 
@@ -1599,4 +1607,4 @@ Symbol: __main
       At line 192 in file startup_stm32f401xe.s
 Comment: __main used once
 2 symbols
-420 symbols in table
+421 symbols in table

@@ -1,12 +1,13 @@
 #include "Communication_function.h"
+extern CONTROL_TYPE REGULATOR_CACHE,REGULATOR;
 
 void Transmit_UART(uint8_t * T) 
 { 
 		strcpy((char*)BUFFER_TX[Indice_Stop_TX],(char*)T);
 		strcpy((char*)BUFFER_TX_UART2[Indice_Stop_TX_UART2],(char*)T);
 
-		Indice_Stop_TX=(Indice_Stop_TX+1)%SIZE_BUFFER;
-		Indice_Stop_TX_UART2=(Indice_Stop_TX_UART2+1)%SIZE_BUFFER;
+		Indice_Stop_TX=(Indice_Stop_TX+1)%(SIZE_BUFFER);
+		Indice_Stop_TX_UART2=(Indice_Stop_TX_UART2+1)%(SIZE_BUFFER);
 
 		if(huart6.gState == HAL_UART_STATE_READY)
 				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
@@ -19,26 +20,42 @@ void Analyse_RX_Buffer()
 {
 	if(Indice_Start_RX!=Indice_Stop_RX)
 	{//New message to Analyse
-			strcpy((char *)UART_RX_Analyse,(char *) BUFFER_RX[Indice_Start_RX]);
-			Indice_Start_RX=(Indice_Start_RX+1)%SIZE_BUFFER;
+			strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX[Indice_Start_RX]);
+			for(int i=0;i<SIZE_UART;i++)
+				BUFFER_RX[Indice_Start_RX][i]='\0';	
+			strcpy((char *) BUFFER_RX[Indice_Start_RX]," ");
+			Indice_Start_RX=(Indice_Start_RX+1)%(SIZE_BUFFER);
 	}else if(Indice_Start_RX_UART2!=Indice_Stop_RX_UART2)
 	{
-		strcpy((char *)UART_RX_Analyse,(char *) BUFFER_RX_UART2[Indice_Start_RX_UART2]);
-		Indice_Start_RX_UART2=(Indice_Start_RX_UART2+1)%SIZE_BUFFER;
+		strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX_UART2[Indice_Start_RX_UART2]);
+		for(int i=0;i<SIZE_UART;i++)
+			BUFFER_RX_UART2[Indice_Start_RX_UART2][i]='\0';	
+		Indice_Start_RX_UART2=(Indice_Start_RX_UART2+1)%(SIZE_BUFFER);
 	}
 	else
 		return;
-	//strcpy((char *) BUFFER_RX[Indice_Start_RX]," ");
-	 String_Analysis(UART_RX_Analyse);
+	uint8_t AnalysisEOF=0;
+	for(int i=0;i<SIZE_UART;i++)
+		{
+			if(UART_RX_Analyse[i]=='\n')
+				AnalysisEOF=1;
+		}
+	if(AnalysisEOF==1)
+	{
+		String_Analysis(UART_RX_Analyse);
+		for(int i=0;i<SIZE_UART;i++)
+			UART_RX_Analyse[i]='\0';		
+	}
+
 		
 }
 void String_Analysis(uint8_t* Input)
 {
 	int char_counter = 0;
-	char letter;
-	float value;
-	float Table_values[20];
-	uint8_t Table_Letter[20];
+	char letter='\0';
+	float value=-1;
+	static float Table_values[20]={'\0'};
+	static uint8_t Table_Letter[20]={0};
 		int Parameters_N=0;
 	while (next_statement(&letter, &value, (char *) Input, &char_counter))
 	{
@@ -48,7 +65,8 @@ void String_Analysis(uint8_t* Input)
 	}
 	if(Parameters_N==0)
 		return;
-	uint8_t Answer[40];
+	uint8_t Answer[40]="";
+
 	switch(Table_Letter[0])
 	{
 		case 'G':
@@ -56,6 +74,12 @@ void String_Analysis(uint8_t* Input)
 				{
 					case 0:
 						COMMAND_G0(Table_Letter+1,Table_values+1,Parameters_N-1);//Set destination
+					break;
+					case 1:
+						COMMAND_G1(Table_Letter+1,Table_values+1,Parameters_N-1);//Set Speed destination
+					break;
+					case 2:
+						COMMAND_G2(Table_Letter+1,Table_values+1,Parameters_N-1);//Set PWM
 					break;
 					case 92:
 						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
@@ -103,6 +127,12 @@ void String_Analysis(uint8_t* Input)
 				Transmit_UART(Answer);
 			break;
 	}
+	int j=0;
+	for(j=0;j<20;j++)
+	{
+		Table_values[j]='\0';
+		Table_Letter[j]=0;
+	}
 }
 void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
 {//O1 H0/1 Sx
@@ -148,6 +178,7 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 		ANGLE_DES_RAD_CACHE=ANGLE_DES_RAD;
 		X_DES_MM_CACHE=X_DES_MM;
 		Y_DES_MM_CACHE=Y_DES_MM;
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;
 	}
 	int j=0;
 	while(j<Number_Parameters)
@@ -163,11 +194,75 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 				case 'A':
 					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j]*PI/180;
 					break;
+				case 'T':
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];
+					break;
 			}
 			j++;
 	}
 	uint8_t Answer[40];
-	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE);
+	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f T=%0.2f\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE,TIMEOUT_MS_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_DEST_PARAMETERS=1;
+	
+}
+void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//G1 Rx Ly
+	if(UPDATE_DEST_PARAMETERS==0)
+	{
+		SPEED_R_DES_CACHE=SPEED_R_DES;
+		SPEED_L_DES_CACHE=SPEED_L_DES;
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;
+	}
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'R':
+					SPEED_R_DES_CACHE=Table_Parameters_Number[j];				
+					break;
+				case 'L':
+					SPEED_L_DES_CACHE=Table_Parameters_Number[j];
+					break;
+				case 'T':
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE);
+	Transmit_UART(Answer);
+	UPDATE_DEST_PARAMETERS=1;
+}
+void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//G2 Rx Ly (PWM)
+	if(UPDATE_DEST_PARAMETERS==0)
+	{
+		PWM_L_DES_CACHE=PWM_L_DES;
+		PWM_R_DES_CACHE=PWM_R_DES;
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;
+	}
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'R':
+					PWM_R_DES_CACHE=Table_Parameters_Number[j];				
+					break;
+				case 'L':
+					PWM_L_DES_CACHE=Table_Parameters_Number[j];
+					break;
+				case 'T':
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",PWM_R_DES_CACHE,PWM_L_DES_CACHE,TIMEOUT_MS_CACHE);
 	Transmit_UART(Answer);
 	UPDATE_DEST_PARAMETERS=1;
 }
@@ -203,9 +298,30 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 }
 void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
 {// M3 
-	CONTROL_ENABLED=1;
+	if(UPDATE_DEST_PARAMETERS==0)
+	{
+	 REGULATOR_CACHE=REGULATOR;
+	}
+	int j=0;
+	SENSOR_ENABLED=0xFFFF;
+	while(j<Number_Parameters)
+	{
+		
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'H':
+					REGULATOR_CACHE=(CONTROL_TYPE) Table_Parameters_Number[j];				
+				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}
+					break;
+				case 'S':
+					SENSOR_ENABLED=(CONTROL_TYPE) Table_Parameters_Number[j];				
+				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}
+					break;
+			}
+			j++;
+	}
 	uint8_t Answer[40];
-	sprintf((char*)Answer,"OK: Control Enabled \r\n");
+	sprintf((char*)Answer,"OK: Controller is: %d \r\n",REGULATOR_CACHE);
 	Transmit_UART(Answer);
 }
 void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
@@ -332,12 +448,15 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 {// M301 H0/1 Px Ix Dx
 	if(UPDATE_CONTROL_PARAMETERS==0)
 	{
-		P_DISTANCE_CACHE= P_DISTANCE;
-		I_DISTANCE_CACHE= I_DISTANCE;
-		D_DISTANCE_CACHE= D_DISTANCE;
+		P_SPEED_CACHE= P_SPEED;
+		I_SPEED_CACHE= I_SPEED;
+		D_SPEED_CACHE= D_SPEED;
 		P_ANGLE_CACHE= P_ANGLE;
 		I_ANGLE_CACHE= I_ANGLE;
 		D_ANGLE_CACHE= D_ANGLE;
+		P_DISTANCE_CACHE= P_DISTANCE;
+		I_DISTANCE_CACHE= I_DISTANCE;
+		D_DISTANCE_CACHE= D_DISTANCE;
 	}
 	int j=0;
 	int Type=-1;;
@@ -350,32 +469,40 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 					break;
 				case 'P':
 						if(Type==0)
-							P_DISTANCE_CACHE=Table_Parameters_Number[j];
+							P_SPEED_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							P_ANGLE_CACHE=Table_Parameters_Number[j];	
-					break;
-				case 'I':
-						if(Type==0)
-							D_DISTANCE_CACHE=Table_Parameters_Number[j];
-						else if(Type==1)
-							D_ANGLE_CACHE=Table_Parameters_Number[j];	
+						else if(Type==2)
+							P_DISTANCE_CACHE=Table_Parameters_Number[j];	
 					break;
 				case 'D':
 						if(Type==0)
-							I_DISTANCE_CACHE=Table_Parameters_Number[j];
+							D_SPEED_CACHE=Table_Parameters_Number[j];
+						else if(Type==1)
+							D_ANGLE_CACHE=Table_Parameters_Number[j];	
+						else if(Type==2)
+							D_DISTANCE_CACHE=Table_Parameters_Number[j];
+					break;
+				case 'I':
+						if(Type==0)
+							I_SPEED_CACHE=Table_Parameters_Number[j];
 						else if(Type==1)
 							I_ANGLE_CACHE=Table_Parameters_Number[j];
+						else if(Type==2)
+							I_DISTANCE_CACHE=Table_Parameters_Number[j];
 					break;
 			}
 			j++;
 	}
 	uint8_t Answer[40];
 	if(Type==0)//Distance PID selected
-		sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,D_DISTANCE_CACHE,I_DISTANCE_CACHE);
+		sprintf((char*)Answer,"OK: S_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_SPEED_CACHE,I_SPEED_CACHE,D_SPEED_CACHE);
 	else if(Type==1)
-	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,D_ANGLE_CACHE,I_ANGLE_CACHE);
+	  sprintf((char*)Answer,"OK: A_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_ANGLE_CACHE,I_ANGLE_CACHE,D_ANGLE_CACHE);
+	else if(Type==2)
+	  sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,I_DISTANCE_CACHE,D_DISTANCE_CACHE);
 	else
-		sprintf((char*)Answer,"KO: No PID type selected (H0 or H1) \r\n");
+		sprintf((char*)Answer,"KO: No PID type selected (H0 or H1 or H2) \r\n");
 	Transmit_UART(Answer);
 	UPDATE_CONTROL_PARAMETERS=1;
 }

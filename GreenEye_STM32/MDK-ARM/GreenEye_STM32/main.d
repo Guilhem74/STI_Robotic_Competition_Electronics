@@ -22,6 +22,8 @@ greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h
+greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h
+greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 greeneye_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
@@ -35,5 +37,4 @@ greeneye_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 greeneye_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 greeneye_stm32\main.o: ../Src/Communication_function.h
 greeneye_stm32\main.o: ../Src/Extern_call_variable.h
-greeneye_stm32\main.o: ../Src/Communication_function.h
 greeneye_stm32\main.o: ../Src/List_Variables.h

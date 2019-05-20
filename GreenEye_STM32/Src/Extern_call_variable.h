@@ -14,8 +14,17 @@ extern uint8_t Indice_Start_RX,Indice_Stop_RX;
 extern uint8_t Indice_Start_RX_UART2,Indice_Stop_RX_UART2;
 extern uint8_t Indice_Start_TX,Indice_Stop_TX;
 extern uint8_t Indice_Start_TX_UART2,Indice_Stop_TX_UART2;
+typedef enum CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}CONTROL_TYPE;
+typedef enum Sensors_Letter {A, B, C,D,E,F,G,H,I,J,K,L,M}Sensors_Letter;
+extern uint16_t SENSOR_ENABLED;
 
+extern float SPEED_R_DES,SPEED_R_DES_CACHE;
+extern float SPEED_L_DES,SPEED_L_DES_CACHE;
+extern float PWM_R_DES,PWM_R_DES_CACHE;
+extern float PWM_L_DES,PWM_L_DES_CACHE;
+extern float TIMEOUT_MS,TIMEOUT_MS_CACHE;
 extern uint16_t Sensor;
+extern uint32_t Result_ADC[14];
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
@@ -41,6 +50,7 @@ extern float ANGLE_POS_RAD_CACHE,X_POS_MM_CACHE,Y_POS_MM_CACHE;
 extern float ANGLE_DES_RAD_CACHE,X_DES_MM_CACHE,Y_DES_MM_CACHE;
 extern float TICS_2_MM, SPACING_WHEELS, TICS_2_MM_CACHE,SPACING_WHEELS_CACHE;
 extern float FINAL_BOOL_DISTANCE_MM,FINAL_BOOL_DISTANCE_MM_CACHE;
+extern float FINAL_BOOL2_DISTANCE_MM,FINAL_BOOL2_DISTANCE_MM_CACHE;
 
 extern int8_t CONTROL_ENABLED, UPDATE_CONTROL_PARAMETERS;
 
@@ -52,11 +62,15 @@ extern int16_t ACCELERATION_MAX_ANGLE_MM_S2 ,ACCELERATION_MAX_ANGLE_MM_S2_CACHE 
 extern int16_t BRAKING_MAX_ANGLE_MM_S2 ,BRAKING_MAX_ANGLE_MM_S2_CACHE ;
 extern float ANTICIPATION_PERCENTAGE,ANTICIPATION_PERCENTAGE_CACHE;
 extern float LOOP_CONTROL_TIMING_HZ;
-
-extern float P_DISTANCE,P_DISTANCE_CACHE;
-extern float I_DISTANCE,I_DISTANCE_CACHE;
-extern float D_DISTANCE,D_DISTANCE_CACHE;
+extern float R_SPEED_TARGET, L_SPEED_TARGET;
+extern uint8_t STATUS_BOOL_1,STATUS_BOOL_2;
+extern float P_SPEED,P_SPEED_CACHE;
+extern float I_SPEED,I_SPEED_CACHE;
+extern float D_SPEED,D_SPEED_CACHE;
 extern float P_ANGLE,P_ANGLE_CACHE;
 extern float I_ANGLE,I_ANGLE_CACHE;
 extern float D_ANGLE,D_ANGLE_CACHE;
+extern float P_DISTANCE,P_DISTANCE_CACHE;
+extern float I_DISTANCE,I_DISTANCE_CACHE;
+extern float D_DISTANCE,D_DISTANCE_CACHE;
 #endif
