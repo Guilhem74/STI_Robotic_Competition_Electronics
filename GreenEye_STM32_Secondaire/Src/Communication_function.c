@@ -60,6 +60,9 @@ void String_Analysis(uint8_t* Input)
 					case 1:
 						COMMAND_G1(Table_Letter+1,Table_values+1,Parameters_N-1);//Set destination
 					break;
+					case 2:
+						COMMAND_G2(Table_Letter+1,Table_values+1,Parameters_N-1);//Set PWM
+					break;
 					case 92:
 						COMMAND_G92(Table_Letter+1,Table_values+1,Parameters_N-1);//Set actual position
 					break;
@@ -175,6 +178,28 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	UPDATE_DEST_PARAMETERS=1;
 }
 void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
+{//G1 Rx Ly
+
+	int j=0;
+	while(j<Number_Parameters)
+	{
+			switch(Table_Parameters_Letter[j])
+			{
+				case 'R':
+					R_SPEED_TARGET=Table_Parameters_Number[j];				
+					break;
+				case 'L':
+					L_SPEED_TARGET=Table_Parameters_Number[j];
+					break;
+			}
+			j++;
+	}
+	uint8_t Answer[40];
+	sprintf((char*)Answer,"OK: D=%0.2f G=%0.2f \r\n",R_SPEED_TARGET,L_SPEED_TARGET);
+	Transmit_UART(Answer);
+	UPDATE_DEST_PARAMETERS=1;
+}
+void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )
 {//G1 Rx Ly
 
 	int j=0;

@@ -84,7 +84,7 @@ void Control(void)
 				TIM2->CCR2=abs(Output_Right_Motor);
 				TIM2->CCR3=abs(Output_Left_Motor);
 				uint8_t Answer[40];
-				sprintf((char*)Answer,"%0.2f;%0.2f;%d;%0.2f;%d\r\n",R_SPEED_TARGET,Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Output_Right_Motor);
+				sprintf((char*)Answer,"%0.2f;%0.2f\r\n",Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ,Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ);
 				Transmit_UART(Answer);
 
 }

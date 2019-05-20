@@ -170,7 +170,9 @@ int main(void)
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 	HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
-
+					uint8_t Answer[40];
+					sprintf((char*)Answer,"STM32_Primary");
+				  Transmit_UART(Answer);
   /* USER CODE END 2 */
 
   /* Infinite loop */

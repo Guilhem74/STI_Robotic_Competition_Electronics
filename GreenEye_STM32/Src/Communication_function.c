@@ -20,23 +20,34 @@ void Analyse_RX_Buffer()
 {
 	if(Indice_Start_RX!=Indice_Stop_RX)
 	{//New message to Analyse
-			strcpy((char *)UART_RX_Analyse,(char *) BUFFER_RX[Indice_Start_RX]);
+			strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX[Indice_Start_RX]);
 			for(int i=0;i<SIZE_UART;i++)
 				BUFFER_RX[Indice_Start_RX][i]='\0';	
 			strcpy((char *) BUFFER_RX[Indice_Start_RX]," ");
 			Indice_Start_RX=(Indice_Start_RX+1)%(SIZE_BUFFER);
 	}else if(Indice_Start_RX_UART2!=Indice_Stop_RX_UART2)
 	{
-		strcpy((char *)UART_RX_Analyse,(char *) BUFFER_RX_UART2[Indice_Start_RX_UART2]);
+		strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX_UART2[Indice_Start_RX_UART2]);
 		for(int i=0;i<SIZE_UART;i++)
 			BUFFER_RX_UART2[Indice_Start_RX_UART2][i]='\0';	
 		Indice_Start_RX_UART2=(Indice_Start_RX_UART2+1)%(SIZE_BUFFER);
 	}
 	else
 		return;
-	 String_Analysis(UART_RX_Analyse);
+	uint8_t AnalysisEOF=0;
 	for(int i=0;i<SIZE_UART;i++)
-		UART_RX_Analyse[i]='\0';		
+		{
+			if(UART_RX_Analyse[i]=='\n')
+				AnalysisEOF=1;
+		}
+	if(AnalysisEOF==1)
+	{
+		String_Analysis(UART_RX_Analyse);
+		for(int i=0;i<SIZE_UART;i++)
+			UART_RX_Analyse[i]='\0';		
+	}
+
+		
 }
 void String_Analysis(uint8_t* Input)
 {
@@ -292,12 +303,18 @@ void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	 REGULATOR_CACHE=REGULATOR;
 	}
 	int j=0;
+	SENSOR_ENABLED=0xFFFF;
 	while(j<Number_Parameters)
 	{
+		
 			switch(Table_Parameters_Letter[j])
 			{
 				case 'H':
 					REGULATOR_CACHE=(CONTROL_TYPE) Table_Parameters_Number[j];				
+				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}
+					break;
+				case 'S':
+					SENSOR_ENABLED=(CONTROL_TYPE) Table_Parameters_Number[j];				
 				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}
 					break;
 			}

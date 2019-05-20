@@ -1,8 +1,8 @@
 Dependencies for Project 'GreenEye_STM32', Target 'GreenEye_STM32': (DO NOT MODIFY !)
-F (startup_stm32f401xe.s)(0x5CDB2464)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include--pd "__UVISION_VERSION SETA 526" --pd "_RTE_ SETA 1" --pd "STM32F401xE SETA 1"--list startup_stm32f401xe.lst --xref -o greeneye_stm32\startup_stm32f401xe.o --depend greeneye_stm32\startup_stm32f401xe.d)
-F (..\Src\Communication_function.c)(0x5CDAD967)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\communication_function.o --omf_browse greeneye_stm32\communication_function.crf --depend greeneye_stm32\communication_function.d)
+F (startup_stm32f401xe.s)(0x5CE179BB)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include--pd "__UVISION_VERSION SETA 526" --pd "_RTE_ SETA 1" --pd "STM32F401xE SETA 1"--list startup_stm32f401xe.lst --xref -o greeneye_stm32\startup_stm32f401xe.o --depend greeneye_stm32\startup_stm32f401xe.d)
+F (..\Src\Communication_function.c)(0x5CE333C5)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\communication_function.o --omf_browse greeneye_stm32\communication_function.crf --depend greeneye_stm32\communication_function.d)
 I (..\Src\Communication_function.h)(0x5CDAC4A7)
-I (..\Src\Extern_call_variable.h)(0x5CDB265A)
+I (..\Src\Extern_call_variable.h)(0x5CE2CD6F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
 I (../Inc/main.h)(0x5CDB2460)
@@ -38,11 +38,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x5C792586)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x5C792586)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
 F (..\Src\Communication_function.h)(0x5CDAC4A7)()
-F (..\Src\Extern_call_variable.h)(0x5CDB265A)()
-F (..\Src\List_Variables.h)(0x5CDB1FB5)()
-F (..\Src\Control_Function.c)(0x5CDB2A86)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\control_function.o --omf_browse greeneye_stm32\control_function.crf --depend greeneye_stm32\control_function.d)
+F (..\Src\Extern_call_variable.h)(0x5CE2CD6F)()
+F (..\Src\List_Variables.h)(0x5CE18763)()
+F (..\Src\Control_Function.c)(0x5CE3079E)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\control_function.o --omf_browse greeneye_stm32\control_function.crf --depend greeneye_stm32\control_function.d)
 I (..\Src\Control_Function.h)(0x5CDB2670)
-I (..\Src\Extern_call_variable.h)(0x5CDB265A)
+I (..\Src\Extern_call_variable.h)(0x5CE2CD6F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
 I (../Inc/main.h)(0x5CDB2460)
@@ -79,7 +79,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x5C792586)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
 I (..\Src\Communication_function.h)(0x5CDAC4A7)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599F3DAE)
-F (../Src/main.c)(0x5CDB2461)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\main.o --omf_browse greeneye_stm32\main.crf --depend greeneye_stm32\main.d)
+F (../Src/main.c)(0x5CE30B68)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\main.o --omf_browse greeneye_stm32\main.crf --depend greeneye_stm32\main.d)
 I (../Inc/main.h)(0x5CDB2460)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x5C792586)
 I (../Inc/stm32f4xx_hal_conf.h)(0x5CDB2460)
@@ -116,8 +116,8 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599F3DAE)
 I (../Src/Communication_function.h)(0x5CDAC4A7)
-I (../Src/Extern_call_variable.h)(0x5CDB265A)
-I (../Src/List_Variables.h)(0x5CDB1FB5)
+I (../Src/Extern_call_variable.h)(0x5CE2CD6F)
+I (../Src/List_Variables.h)(0x5CE18763)
 F (../Src/stm32f4xx_it.c)(0x5CDB245F)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_GreenEye_STM32-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32F401xE -DUSE_HAL_DRIVER -DSTM32F401xE-o greeneye_stm32\stm32f4xx_it.o --omf_browse greeneye_stm32\stm32f4xx_it.crf --depend greeneye_stm32\stm32f4xx_it.d)
 I (../Inc/main.h)(0x5CDB2460)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x5C792586)
@@ -153,7 +153,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x5C792586)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x5C792586)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
 I (../Inc/stm32f4xx_it.h)(0x5CDB245F)
-I (../Src/Extern_call_variable.h)(0x5CDB265A)
+I (../Src/Extern_call_variable.h)(0x5CE2CD6F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
 I (../Src/Communication_function.h)(0x5CDAC4A7)
 I (../Src/Control_function.h)(0x5CDB2670)

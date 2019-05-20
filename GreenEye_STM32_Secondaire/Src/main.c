@@ -117,7 +117,7 @@ static void MX_TIM10_Init(void);
   * @retval int
   */
 int main(void)
- {
+{
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -185,16 +185,7 @@ int main(void)
 
 	//TIM2->CCR2=abs(Output_Right_Motor);
 					//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
-		if(	HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13))
-		{
-			R_SPEED_TARGET=1500;
-			L_SPEED_TARGET=2100;
-		}
-		else
-		{
-			R_SPEED_TARGET=-1500;
-			L_SPEED_TARGET=-2100;
-		}
+
 		Analyse_RX_Buffer();
 		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_10,GPIO_PIN_SET);
 	}

@@ -25,14 +25,10 @@ void Update_POS(void)
 				Encoder_Left_Past=Encoder_Left;
 				Encoder_Right=TIM1->CNT;
 				Encoder_Left=TIM3->CNT;
-				int16_t Delta_Encoder_Right=Encoder_Right-Encoder_Right_Past;
+				int16_t Delta_Encoder_Right=(Encoder_Right-Encoder_Right_Past);
 				int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
-				float Distance=(Delta_Encoder_Right+Delta_Encoder_Left)*TICS_2_MM/(2);
-				float Angle_rad=((float)((int16_t)(Delta_Encoder_Right-Delta_Encoder_Left))*TICS_2_MM)/(SPACING_WHEELS);
-				if(abs(Delta_Encoder_Right)>abs(Max_Delta_R))
-					Max_Delta_R=Delta_Encoder_Right;
-				if(abs(Delta_Encoder_Left)>abs(Max_Delta_L))
-					Max_Delta_L=Delta_Encoder_Left;
+				float Distance=(Delta_Encoder_Right+Delta_Encoder_Left*1.0015)*TICS_2_MM/(2);
+				float Angle_rad=((float)(Delta_Encoder_Right-Delta_Encoder_Left*1.0015)*TICS_2_MM)/(SPACING_WHEELS);
 				ANGLE_POS_RAD+=Angle_rad;
 				X_POS_MM +=  Distance * cos(ANGLE_POS_RAD);
 				Y_POS_MM +=  Distance * sin(ANGLE_POS_RAD);
@@ -46,6 +42,7 @@ void Control(void)//100hz
 				static int16_t Encoder_Left_Control=0;
 				static int16_t Encoder_Right_Past_Control=0;
 				static int16_t Encoder_Left_Past_Control=0;
+				static uint8_t Arrived_Transmitted=0;
 				Encoder_Right_Control=TIM1->CNT;
 				Encoder_Left_Control=TIM3->CNT;
 				int16_t Delta_Encoder_Right=Encoder_Right_Control-Encoder_Right_Past_Control;
@@ -87,9 +84,11 @@ void Control(void)//100hz
 					TIMEOUT_MS=TIMEOUT_MS_CACHE;
 					REGULATOR=REGULATOR_CACHE;
 					TIMEOUT_COUNTER=0;
+					Arrived_Transmitted=0;
 				}
 				if(REGULATOR_CACHE!=REGULATOR)
 				{
+					Arrived_Transmitted=0;
 					REGULATOR=REGULATOR_CACHE;
 					TIMEOUT_COUNTER=0;
 				}
@@ -97,22 +96,12 @@ void Control(void)//100hz
 				int Error_Y=(Y_DES_MM-Y_POS_MM);
 				float Error_Distance=sqrt(Error_X*Error_X+Error_Y*Error_Y);
 				float Error_Angle_Rad=0;
-				
-				if(Error_Distance<FINAL_BOOL_DISTANCE_MM)
-				{
-					Error_Angle_Rad=ANGLE_DES_RAD-ANGLE_POS_RAD;//atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
-				}
-				else
-				{
-					Error_Angle_Rad=atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
-
-				}			
-					Error_Angle_Rad=atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
+				Error_Angle_Rad=atan2(Error_Y,Error_X)-ANGLE_POS_RAD;
 				while(Error_Angle_Rad>PI)
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
-				if(Error_Angle_Rad>PI/2||Error_Angle_Rad<-PI/2)//Backward move
+				if(Error_Angle_Rad>PI/2+PI/18||Error_Angle_Rad<-PI/2-PI/18)//Backward move
 					{
 						Error_Distance=-Error_Distance;
 						Error_Angle_Rad+=PI;
@@ -121,17 +110,25 @@ void Control(void)//100hz
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
+				
 				Error_Distance=Error_Distance*fabs(cos(Error_Angle_Rad));
 				if(fabs(Error_Distance)<FINAL_BOOL_DISTANCE_MM)
 				{
 					if(fabs(Error_Distance)<FINAL_BOOL2_DISTANCE_MM|| STATUS_BOOL_2==1)
 					{
 						STATUS_BOOL_2=1;
-						Error_Distance=0;			
+						Error_Distance=0;	
+						if(REGULATOR ==Position_Control && Arrived_Transmitted==0)
+						{	uint8_t Answer[40];
+							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f\n\r",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);
+							Transmit_UART(Answer);	
+							Arrived_Transmitted=1;
+						}
 					}
 				}
 				else
 				{
+					Arrived_Transmitted=0;
 					STATUS_BOOL_1=0;
 					STATUS_BOOL_2=0;
 				}
@@ -177,9 +174,7 @@ void Control(void)//100hz
 							Error_Speed_Left = L_SPEED_TARGET - Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ;
 							Output_PID_R=PID_R(Error_Speed_Right);
 							Output_PID_L=PID_L(Error_Speed_Left);
-						uint8_t Answer[40];
-						//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Error_Distance,Error_Angle_Rad,Output_PID_R,Output_PID_L);
-						Transmit_UART(Answer);
+								
 						 break;
 				}
 				TIMEOUT_COUNTER++;
@@ -193,6 +188,7 @@ void Control(void)//100hz
 					}
 					REGULATOR_CACHE=No_Control;// Stall instead ?
 				}
+
 //				if(fabs(R_SPEED_TARGET)<20)
 //					R_SPEED_TARGET=0;
 //				if(fabs(L_SPEED_TARGET)<20)
@@ -233,7 +229,9 @@ void Control(void)//100hz
 				TIM2->CCR3=(int) fabs(Output_Left_Motor);
 				//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Error_Angle_Deg);
 				//
-
+				uint8_t Answer[40];
+				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\n\r",Error_Distance,Error_Angle_Rad*180/PI,Output_Right_Motor,Output_Left_Motor);
+				//Transmit_UART(Answer);	
 				
 				
 }
@@ -347,17 +345,42 @@ float PID_DISTANCE(float Error) {
   return Output;
 }
 float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
-{
-	if(*Error_Distance>0 && (Result_ADC[11]>1500 ||  Result_ADC[12]>1500 || Result_ADC[10]>1500))
-	{
+{//0xFront Left Right Back
+	//typedef enum Sensors_Letter {A, B, C,D,E,F,G,H,I,J,K, L, M}Sensors_Letter;
+	//                              0 1  2 3 4 5 6 7 8 9 10 11 12
+	#define A_Sensor 0
+	#define B_Sensor 1
+	#define C_Sensor 2
+	#define D_Sensor 3
+	#define E_Sensor 4
+	#define F_Sensor 5
+	#define G_Sensor 6
+	#define H_Sensor 7
+	#define I_Sensor 8
+	#define J_Sensor 9
+	#define K_Sensor 10
+	#define L_Sensor 11
+	#define M_Sensor 12
+	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>2000 ||  Result_ADC[M_Sensor]>2000 || Result_ADC[K_Sensor]>2000) && ((SENSOR_ENABLED & 0x1000)!=0))
+	{//FRONT
 		*Error_Distance=0;
+		REGULATOR_CACHE=No_Control;
+	}
+	else if(*Error_Distance<0 && (Result_ADC[A_Sensor]>2000 ||  Result_ADC[B_Sensor]>2000 || Result_ADC[C_Sensor]>2000 || Result_ADC[D_Sensor]>2000) && ((SENSOR_ENABLED & 0x0001)!=0))
+	{//BACK
+		*Error_Distance=0;
+		REGULATOR_CACHE=No_Control;
 
 	}
-	else if(*Error_Distance<0 && (Result_ADC[0]>1500 ||  Result_ADC[1]>1500 || Result_ADC[2]>1500 || Result_ADC[3]>1500))
-	{
-		*Error_Distance=0;
-
+	if(*Error_Angle_Deg>0 && (Result_ADC[G_Sensor]>1500 ||  Result_ADC[J_Sensor]>1500||  Result_ADC[H_Sensor]>1500))
+	{//Turn CCW -> Sensor Left
+		*Error_Angle_Deg=0;
 	}
+	else if(*Error_Angle_Deg<0 && (Result_ADC[E_Sensor]>1500 ||  Result_ADC[I_Sensor]>1500 ||  Result_ADC[F_Sensor]>1500  ))
+	{//Turn CCW -> Sensor Left
+		*Error_Angle_Deg=0;
+	}
+
 
 	return 0.0;
 }
