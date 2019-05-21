@@ -17,6 +17,7 @@ extern uint8_t Indice_Start_TX_UART2,Indice_Stop_TX_UART2;
 typedef enum CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}CONTROL_TYPE;
 typedef enum Sensors_Letter {A, B, C,D,E,F,G,H,I,J,K,L,M}Sensors_Letter;
 extern uint16_t SENSOR_ENABLED;
+extern uint16_t SENSOR_DETECTED; 
 
 extern float SPEED_R_DES,SPEED_R_DES_CACHE;
 extern float SPEED_L_DES,SPEED_L_DES_CACHE;

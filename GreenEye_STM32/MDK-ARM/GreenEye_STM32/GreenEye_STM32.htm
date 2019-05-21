@@ -3,9 +3,9 @@
 <title>Static Call Graph - [GreenEye_STM32\GreenEye_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image GreenEye_STM32\GreenEye_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 21 01:10:07 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 21 15:20:47 2019
 <BR><P>
-<H3>Maximum Stack Usage =        424 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        376 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 TIM1_UP_TIM10_IRQHandler &rArr; Control &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 <P>
@@ -561,7 +561,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[83]"></a>Avoidance</STRONG> (Thumb, 172 bytes, Stack size 20 bytes, control_function.o(i.Avoidance))
+<P><STRONG><a name="[83]"></a>Avoidance</STRONG> (Thumb, 236 bytes, Stack size 20 bytes, control_function.o(i.Avoidance))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = Avoidance
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
@@ -652,7 +652,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;String_Analysis
 </UL>
 
-<P><STRONG><a name="[7a]"></a>COMMAND_M3</STRONG> (Thumb, 108 bytes, Stack size 56 bytes, communication_function.o(i.COMMAND_M3))
+<P><STRONG><a name="[7a]"></a>COMMAND_M3</STRONG> (Thumb, 106 bytes, Stack size 56 bytes, communication_function.o(i.COMMAND_M3))
 <BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = COMMAND_M3 &rArr; Transmit_UART &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Transmit_UART
@@ -690,8 +690,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;String_Analysis
 </UL>
 
-<P><STRONG><a name="[7e]"></a>Control</STRONG> (Thumb, 1842 bytes, Stack size 176 bytes, control_function.o(i.Control))
-<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = Control &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[7e]"></a>Control</STRONG> (Thumb, 1842 bytes, Stack size 128 bytes, control_function.o(i.Control))
+<BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = Control &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
@@ -1377,7 +1377,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xe.o(RESET)
 </UL>
 <P><STRONG><a name="[20]"></a>TIM1_UP_TIM10_IRQHandler</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, stm32f4xx_it.o(i.TIM1_UP_TIM10_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 424<LI>Call Chain = TIM1_UP_TIM10_IRQHandler &rArr; Control &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+<BR><BR>[Stack]<UL><LI>Max Depth = 376<LI>Call Chain = TIM1_UP_TIM10_IRQHandler &rArr; Control &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Control
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_IRQHandler

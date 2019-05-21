@@ -120,7 +120,7 @@ void Control(void)//100hz
 						Error_Distance=0;	
 						if(REGULATOR ==Position_Control && Arrived_Transmitted==0)
 						{	uint8_t Answer[40];
-							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f\n\r",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);
+							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
 							Transmit_UART(Answer);	
 							Arrived_Transmitted=1;
 						}
@@ -182,9 +182,10 @@ void Control(void)//100hz
 				{
 					if(REGULATOR!=No_Control)
 					{
-					uint8_t Answer[40];
-					sprintf((char*)Answer,"Timeout %0.2f\n\r",TIMEOUT_MS);
-				  Transmit_UART(Answer);
+						uint8_t Answer[40];
+						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
+						Transmit_UART(Answer);
+							Arrived_Transmitted=1; 
 					}
 					REGULATOR_CACHE=No_Control;// Stall instead ?
 				}
@@ -229,8 +230,8 @@ void Control(void)//100hz
 				TIM2->CCR3=(int) fabs(Output_Left_Motor);
 				//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Error_Angle_Deg);
 				//
-				uint8_t Answer[40];
-				sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\n\r",Error_Distance,Error_Angle_Rad*180/PI,Output_Right_Motor,Output_Left_Motor);
+				//uint8_t Answer[40];
+				//sprintf((char*)Answer,"%d;%d\n\r",TIM1->CNT,TIM3->CNT);
 				//Transmit_UART(Answer);	
 				
 				
@@ -361,26 +362,40 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	#define K_Sensor 10
 	#define L_Sensor 11
 	#define M_Sensor 12
-	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>2000 ||  Result_ADC[M_Sensor]>2000 || Result_ADC[K_Sensor]>2000) && ((SENSOR_ENABLED & 0x1000)!=0))
-	{//FRONT
-		*Error_Distance=0;
-		REGULATOR_CACHE=No_Control;
-	}
-	else if(*Error_Distance<0 && (Result_ADC[A_Sensor]>2000 ||  Result_ADC[B_Sensor]>2000 || Result_ADC[C_Sensor]>2000 || Result_ADC[D_Sensor]>2000) && ((SENSOR_ENABLED & 0x0001)!=0))
-	{//BACK
-		*Error_Distance=0;
-		REGULATOR_CACHE=No_Control;
-
-	}
-	if(*Error_Angle_Deg>0 && (Result_ADC[G_Sensor]>1500 ||  Result_ADC[J_Sensor]>1500||  Result_ADC[H_Sensor]>1500))
-	{//Turn CCW -> Sensor Left
-		*Error_Angle_Deg=0;
-	}
-	else if(*Error_Angle_Deg<0 && (Result_ADC[E_Sensor]>1500 ||  Result_ADC[I_Sensor]>1500 ||  Result_ADC[F_Sensor]>1500  ))
-	{//Turn CCW -> Sensor Left
-		*Error_Angle_Deg=0;
-	}
-
+int Threshold_Distance=1500;
+int Threshold_Distance_AR=1750; 
+	
+	int Threshold_Angle=1500; 
+ 
+	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance) && ((SENSOR_ENABLED & 0x0008)!=0)) 
+	{//FRONT 
+		*Error_Distance=0; 
+		SENSOR_DETECTED|=0x0008; 
+	} 
+	else if(*Error_Distance<0 && (Result_ADC[A_Sensor]>Threshold_Distance_AR ||  Result_ADC[B_Sensor]>Threshold_Distance_AR || Result_ADC[C_Sensor]>Threshold_Distance_AR || Result_ADC[D_Sensor]>Threshold_Distance_AR) && ((SENSOR_ENABLED & 0x0001)!=0)) 
+	{//BACK 
+		*Error_Distance=0; 
+		SENSOR_DETECTED|=0x0001; 
+	} 
+	else 
+	{ 
+		SENSOR_DETECTED&=~(0x0009); 
+	} 
+	if(*Error_Angle_Deg>0 && (Result_ADC[G_Sensor]>Threshold_Angle ||  Result_ADC[J_Sensor]>Threshold_Angle||  Result_ADC[H_Sensor]>Threshold_Angle)&& ((SENSOR_ENABLED & 0x0002)!=0)) 
+	{//Turn CCW -> Sensor Left 
+		*Error_Angle_Deg=0; 
+		SENSOR_DETECTED|=0x0002; 
+	} 
+	else if(*Error_Angle_Deg<0 && (Result_ADC[E_Sensor]>Threshold_Angle ||  Result_ADC[I_Sensor]>Threshold_Angle ||  Result_ADC[F_Sensor]>Threshold_Angle  )&&(SENSOR_ENABLED & 0x0004)!=0) 
+	{//Turn CW -> Sensor Right 
+		*Error_Angle_Deg=0; 
+		SENSOR_DETECTED|=0x0004; 
+	} 
+	else 
+	{ 
+				SENSOR_DETECTED&=~(0x0006); 
+	} 
+ 
 
 	return 0.0;
 }

@@ -19,6 +19,7 @@ void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Set PWM 
 void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Set actual position
 void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Activate type of control
+void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );//Final bool diameter;
 void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );
 void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Emergency stop
 void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters );// Control loop timing interval

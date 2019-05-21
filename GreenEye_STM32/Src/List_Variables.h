@@ -17,7 +17,7 @@ uint8_t BUFFER_RX_UART2[SIZE_BUFFER][SIZE_UART];
 uint8_t BUFFER_TX_UART2[SIZE_BUFFER][SIZE_UART]; 
 uint8_t Indice_Start_RX_UART2=0,Indice_Stop_RX_UART2=0; 
 uint8_t Indice_Start_TX_UART2=0,Indice_Stop_TX_UART2=0; 
-
+uint16_t SENSOR_DETECTED;
 uint16_t Sensor=0;
 uint32_t Result_ADC[14]={0};
 /* Robot localization Variables*/
