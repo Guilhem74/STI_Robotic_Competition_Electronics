@@ -92,6 +92,9 @@ void String_Analysis(uint8_t* Input)
 					case 3: 
 						COMMAND_M3(Table_Letter+1,Table_values+1,Parameters_N-1);//Enable position control 
 						break; 
+					case 15: 
+						COMMAND_M15(Table_Letter+1,Table_values+1,Parameters_N-1);//Robot parameters, wheel size... 
+						break; 
 					case 92: 
 						COMMAND_M92(Table_Letter+1,Table_values+1,Parameters_N-1);//Robot parameters, wheel size... 
 						break; 
@@ -286,7 +289,7 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 					Y_POS_MM_CACHE=Table_Parameters_Number[j]; 
 					break; 
 				case 'A': 
-					ANGLE_POS_RAD_CACHE=Table_Parameters_Number[j]; 
+					ANGLE_POS_RAD_CACHE=Table_Parameters_Number[j]*PI/180; 
 					break; 
 			} 
 			j++; 
@@ -323,6 +326,56 @@ void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	uint8_t Answer[40]; 
 	sprintf((char*)Answer,"OK: M3 H%d S%d\r\n",REGULATOR_CACHE,SENSOR_ENABLED); 
 	Transmit_UART(Answer); 
+} 
+void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
+{// M3  
+	#define A_Sensor 0
+	#define B_Sensor 1
+	#define C_Sensor 2
+	#define D_Sensor 3
+	#define E_Sensor 4
+	#define F_Sensor 5
+	#define G_Sensor 6
+	#define H_Sensor 7
+	#define I_Sensor 8
+	#define J_Sensor 9
+	#define K_Sensor 10
+	#define L_Sensor 11
+	#define M_Sensor 12
+	int type=-1;
+	int j=0;
+	uint8_t Answer[40]; 
+	while(j<Number_Parameters) 
+	{ 
+		 
+			switch(Table_Parameters_Letter[j]) 
+			{ 
+				case 'S': 
+					type=Table_Parameters_Number[j];				 
+					break; 
+			} 
+			switch(type) 
+			{ 
+				case 1: 		
+					sprintf((char*)Answer,"M15, BACK: %d;%d;%d;%d\r\n",Result_ADC[A_Sensor], Result_ADC[B_Sensor],Result_ADC[C_Sensor],Result_ADC[D_Sensor]); 
+					Transmit_UART(Answer); 			 
+					break; 
+				case 2: 		
+					sprintf((char*)Answer,"M15, LEFT: %d;%d;%d\r\n",Result_ADC[G_Sensor], Result_ADC[H_Sensor],Result_ADC[J_Sensor]); 
+					Transmit_UART(Answer); 			 
+					break; 
+				case 4: 		
+					sprintf((char*)Answer,"M15, RIGHT: %d;%d;%d\r\n",Result_ADC[E_Sensor], Result_ADC[I_Sensor],Result_ADC[F_Sensor]); 
+					Transmit_UART(Answer); 			 
+					break; 
+				case 8: 		
+					sprintf((char*)Answer,"M15, FRONT: %d;%d;%d\r\n",Result_ADC[K_Sensor], Result_ADC[L_Sensor],Result_ADC[M_Sensor]); 
+					Transmit_UART(Answer); 			 
+					break; 
+			} 
+			j++; 
+	} 
+	
 } 
 void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
 {// M92 Dx Ax 

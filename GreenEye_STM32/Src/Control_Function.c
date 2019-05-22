@@ -101,7 +101,7 @@ void Control(void)//100hz
 					Error_Angle_Rad-=2*PI;
 				while(Error_Angle_Rad<-PI)
 					Error_Angle_Rad+=2*PI;
-				if(Error_Angle_Rad>PI/2+PI/18||Error_Angle_Rad<-PI/2-PI/18)//Backward move
+				if(Error_Angle_Rad>PI/2+PI/10||Error_Angle_Rad<-(PI/2+PI/10))//Backward move
 					{
 						Error_Distance=-Error_Distance;
 						Error_Angle_Rad+=PI;
@@ -118,22 +118,25 @@ void Control(void)//100hz
 					{
 						STATUS_BOOL_2=1;
 						Error_Distance=0;	
-						if(REGULATOR ==Position_Control && Arrived_Transmitted==0)
-						{	uint8_t Answer[40];
+						if(REGULATOR ==Position_Control && Arrived_Transmitted==0 )
+						{//Distance error is null, angle error too, Speed right and left too
+							uint8_t Answer[40];
 							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
 							Transmit_UART(Answer);	
 							Arrived_Transmitted=1;
+							REGULATOR_CACHE=No_Control;// Stall instead ?
 						}
 					}
 				}
 				else
 				{
-					Arrived_Transmitted=0;
 					STATUS_BOOL_1=0;
 					STATUS_BOOL_2=0;
 				}
 				float Error_Angle_Deg=Error_Angle_Rad*(180/PI);
+
 				Avoidance(&Error_Distance,&Error_Angle_Deg);
+
 				float Output_Angle=PID_ANGLE(Error_Angle_Deg);
 				float Output_Distance=PID_DISTANCE(Error_Distance);
 				if(Output_Distance> SPEED_MAX_DISTANCE_MM_S)
@@ -228,6 +231,14 @@ void Control(void)//100hz
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_11,GPIO_PIN_SET);
 				TIM2->CCR2=(int) fabs(Output_Right_Motor);
 				TIM2->CCR3=(int) fabs(Output_Left_Motor);
+				if(REGULATOR ==Position_Control && Arrived_Transmitted==0 && fabs(Output_Right_Motor)<150 && fabs(Output_Left_Motor)<150 && fabs(Delta_Encoder_Right*TICS_2_MM*LOOP_CONTROL_TIMING_HZ)<5 && fabs(Delta_Encoder_Left*TICS_2_MM*LOOP_CONTROL_TIMING_HZ)<5)
+				{//Distance error is null, angle error too, Speed right and left too
+							uint8_t Answer[40];
+							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
+							Transmit_UART(Answer);	
+							Arrived_Transmitted=1;
+							REGULATOR_CACHE=No_Control;// Stall instead ?
+				}
 				//sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f;%0.2f\r\n",R_SPEED_TARGET,L_SPEED_TARGET,Output_PID_R,Output_PID_L,Output_Right_Motor,Output_Left_Motor,Error_Angle_Deg);
 				//
 				//uint8_t Answer[40];
