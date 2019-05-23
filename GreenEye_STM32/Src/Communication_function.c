@@ -328,7 +328,7 @@ void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	Transmit_UART(Answer); 
 } 
 void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{// M3  
+{// M15
 	#define A_Sensor 0
 	#define B_Sensor 1
 	#define C_Sensor 2

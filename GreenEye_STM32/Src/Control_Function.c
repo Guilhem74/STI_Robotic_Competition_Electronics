@@ -131,6 +131,14 @@ void Control(void)//100hz
 					{
 						STATUS_BOOL_2=1;
 						Error_Distance=0;	
+						if(REGULATOR ==Position_Control && Arrived_Transmitted==0)
+						{
+							uint8_t Answer[40];
+							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
+							Transmit_UART(Answer);	
+							Arrived_Transmitted=1;
+							REGULATOR_CACHE=No_Control;// Stall instead ?
+						}
 					}
 				}
 				else
@@ -249,7 +257,7 @@ void Control(void)//100hz
 					if(Average_Speed_R<2*SIZE_SPEED_ARRAY && Average_Speed_L<2*SIZE_SPEED_ARRAY)
 					{
 						uint8_t Answer[40];
-						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
+						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T2 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED); 
 						Transmit_UART(Answer);	
 						Arrived_Transmitted=1;
 						REGULATOR_CACHE=No_Control;// Stall instead ?
@@ -389,7 +397,7 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	#define K_Sensor 10
 	#define L_Sensor 11
 	#define M_Sensor 12
-	int Threshold_Distance=1500;
+	int Threshold_Distance=1350;
 	int Threshold_Distance_AR=1750; 
 	int Threshold_Angle=1500; 
 	uint16_t Threshold_Array[13]={Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Distance,Threshold_Distance,Threshold_Distance};
