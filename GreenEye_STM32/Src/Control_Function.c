@@ -389,40 +389,34 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	#define K_Sensor 10
 	#define L_Sensor 11
 	#define M_Sensor 12
-int Threshold_Distance=1500;
-int Threshold_Distance_AR=1750; 
-	
+	int Threshold_Distance=1500;
+	int Threshold_Distance_AR=1750; 
 	int Threshold_Angle=1500; 
- 
+	uint16_t Threshold_Array[13]={Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Distance,Threshold_Distance,Threshold_Distance};
 	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance) && ((SENSOR_ENABLED & 0x0008)!=0)) 
 	{//FRONT 
 		*Error_Distance=0; 
-		SENSOR_DETECTED|=0x0008; 
-	} 
+	}
 	else if(*Error_Distance<0 && (Result_ADC[A_Sensor]>Threshold_Distance_AR ||  Result_ADC[B_Sensor]>Threshold_Distance_AR || Result_ADC[C_Sensor]>Threshold_Distance_AR || Result_ADC[D_Sensor]>Threshold_Distance_AR) && ((SENSOR_ENABLED & 0x0001)!=0)) 
 	{//BACK 
 		*Error_Distance=0; 
-		SENSOR_DETECTED|=0x0001; 
-	} 
-	else 
-	{ 
-		SENSOR_DETECTED&=~(0x0009); 
 	} 
 	if(*Error_Angle_Deg>0 && (Result_ADC[G_Sensor]>Threshold_Angle ||  Result_ADC[J_Sensor]>Threshold_Angle||  Result_ADC[H_Sensor]>Threshold_Angle)&& ((SENSOR_ENABLED & 0x0002)!=0)) 
 	{//Turn CCW -> Sensor Left 
 		*Error_Angle_Deg=0; 
-		SENSOR_DETECTED|=0x0002; 
 	} 
 	else if(*Error_Angle_Deg<0 && (Result_ADC[E_Sensor]>Threshold_Angle ||  Result_ADC[I_Sensor]>Threshold_Angle ||  Result_ADC[F_Sensor]>Threshold_Angle  )&&(SENSOR_ENABLED & 0x0004)!=0) 
 	{//Turn CW -> Sensor Right 
 		*Error_Angle_Deg=0; 
-		SENSOR_DETECTED|=0x0004; 
 	} 
-	else 
-	{ 
-				SENSOR_DETECTED&=~(0x0006); 
-	} 
- 
+	SENSOR_DETECTED=0;
+	for(int i=A;i<=M;i++)
+	{
+		if(Result_ADC[i]>Threshold_Array[i])
+		{
+			SENSOR_DETECTED|=1<<i;
+		}
+	}
 
 	return 0.0;
 }
