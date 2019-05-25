@@ -190,159 +190,164 @@ void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	} 
 	Transmit_UART(Answer); 
 } 
-void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{//G0 Xx Yx Ax 
-	if(UPDATE_DEST_PARAMETERS==0) 
-	{ 
-		ANGLE_DES_RAD_CACHE=ANGLE_DES_RAD; 
-		X_DES_MM_CACHE=X_DES_MM; 
-		Y_DES_MM_CACHE=Y_DES_MM; 
-		TIMEOUT_MS_CACHE=TIMEOUT_MS; 
+void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
+{//G0 Xx Yx Ax Tx R0/1 
+	if(UPDATE_DEST_PARAMETERS==0)  
+	{  
+		ANGLE_DES_RAD_CACHE=ANGLE_DES_RAD;  
+		X_DES_MM_CACHE=X_DES_MM;  
+		Y_DES_MM_CACHE=Y_DES_MM;  
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;  
+		BACKWARD_CACHE=0;//No backward move by default 
 	} 
-	int j=0; 
-	while(j<Number_Parameters) 
-	{ 
-			switch(Table_Parameters_Letter[j]) 
-			{ 
-				case 'X': 
-					X_DES_MM_CACHE=Table_Parameters_Number[j];				 
-					break; 
-				case 'Y': 
-					Y_DES_MM_CACHE=Table_Parameters_Number[j]; 
-					break; 
-				case 'A': 
-					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j]*PI/180; 
-					break; 
-				case 'T': 
-					TIMEOUT_MS_CACHE=Table_Parameters_Number[j]; 
-					break; 
-			} 
-			j++; 
-	} 
-	uint8_t Answer[40]; 
-	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f T=%0.2f\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE,TIMEOUT_MS_CACHE); 
-	Transmit_UART(Answer); 
+	int j=0;  
+	while(j<Number_Parameters)  
+	{  
+			switch(Table_Parameters_Letter[j])  
+			{  
+				case 'X':  
+					X_DES_MM_CACHE=Table_Parameters_Number[j];				  
+					break;  
+				case 'Y':  
+					Y_DES_MM_CACHE=Table_Parameters_Number[j];  
+					break;  
+				case 'A':  
+					ANGLE_DES_RAD_CACHE=Table_Parameters_Number[j]*PI/180;  
+					break;  
+				case 'T':  
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];  
+					break;  
+				case 'R':  
+					BACKWARD_CACHE=Table_Parameters_Number[j];  
+					break;  
+			}  
+			j++;  
+	}  
+	uint8_t Answer[40];  
+	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f T=%0.2f B=%d\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE,TIMEOUT_MS_CACHE,BACKWARD_CACHE);  
+	Transmit_UART(Answer);  
+	UPDATE_DEST_PARAMETERS=1;  
+	  
+}  
+void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
+{//G1 Rx Ly  
+	if(UPDATE_DEST_PARAMETERS==0)  
+	{  
+		SPEED_R_DES_CACHE=SPEED_R_DES;  
+		SPEED_L_DES_CACHE=SPEED_L_DES;  
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;  
+	}  
+	int j=0;  
+	while(j<Number_Parameters)  
+	{  
+			switch(Table_Parameters_Letter[j])  
+			{  
+				case 'R':  
+					SPEED_R_DES_CACHE=Table_Parameters_Number[j];				  
+					break;  
+				case 'L':  
+					SPEED_L_DES_CACHE=Table_Parameters_Number[j];  
+					break;  
+				case 'T':  
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];  
+					break;  
+			}  
+			j++;  
+	}  
+	uint8_t Answer[40];  
+	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE);  
+	Transmit_UART(Answer);  
+	UPDATE_DEST_PARAMETERS=1;  
+}  
+void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
+{//G2 Rx Ly (PWM)  
+	if(UPDATE_DEST_PARAMETERS==0)  
+	{  
+		PWM_L_DES_CACHE=PWM_L_DES;  
+		PWM_R_DES_CACHE=PWM_R_DES;  
+		TIMEOUT_MS_CACHE=TIMEOUT_MS;  
+	}  
+	int j=0;  
+	while(j<Number_Parameters)  
+	{  
+			switch(Table_Parameters_Letter[j])  
+			{  
+				case 'R':  
+					PWM_R_DES_CACHE=Table_Parameters_Number[j];				  
+					break;  
+				case 'L':  
+					PWM_L_DES_CACHE=Table_Parameters_Number[j];  
+					break;  
+				case 'T':  
+					TIMEOUT_MS_CACHE=Table_Parameters_Number[j];  
+					break;  
+			}  
+			j++;  
+	}  
+	uint8_t Answer[40];  
+	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",PWM_R_DES_CACHE,PWM_L_DES_CACHE,TIMEOUT_MS_CACHE);  
+	Transmit_UART(Answer);  
+	UPDATE_DEST_PARAMETERS=1;  
+}  
+void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
+{//G92 Xx Yx Ax  
+	if(UPDATE_POS_PARAMETERS==0)  
+	{  
+		ANGLE_POS_RAD_CACHE=ANGLE_POS_RAD;  
+		X_POS_MM_CACHE=X_POS_MM;  
+		Y_POS_MM_CACHE=Y_POS_MM;  
+	}  
+	int j=0;  
+	while(j<Number_Parameters)  
+	{  
+			switch(Table_Parameters_Letter[j])  
+			{  
+				case 'X':  
+					X_POS_MM_CACHE=Table_Parameters_Number[j];				  
+					break;  
+				case 'Y':  
+					Y_POS_MM_CACHE=Table_Parameters_Number[j];  
+					break;  
+				case 'A':  
+					ANGLE_POS_RAD_CACHE=Table_Parameters_Number[j]*PI/180;  
+					break;  
+			}  
+			j++;  
+	}  
+	uint8_t Answer[40];  
+	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE);  
+	Transmit_UART(Answer);  
+	UPDATE_POS_PARAMETERS=1;  
+}  
+void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
+{// M3   
+	if(UPDATE_DEST_PARAMETERS==0)  
+	{  
+	 REGULATOR_CACHE=REGULATOR;  
+	}  
+	int j=0;  
+	SENSOR_ENABLED=0x000F;  
+	while(j<Number_Parameters)  
+	{  
+		  
+			switch(Table_Parameters_Letter[j])  
+			{  
+				case 'H':  
+					REGULATOR_CACHE=(CONTROL_TYPE) Table_Parameters_Number[j];				  
+				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}  
+					break;  
+				case 'S':  
+					SENSOR_ENABLED= Table_Parameters_Number[j];				  
+				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control}  
+					break;  
+			}  
+			j++;  
+	}  
+	uint8_t Answer[40];  
+	sprintf((char*)Answer,"OK: M3 H%d S%d\r\n",REGULATOR_CACHE,SENSOR_ENABLED);  
+	Transmit_UART(Answer);  
 	UPDATE_DEST_PARAMETERS=1; 
-	 
-} 
-void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{//G1 Rx Ly 
-	if(UPDATE_DEST_PARAMETERS==0) 
-	{ 
-		SPEED_R_DES_CACHE=SPEED_R_DES; 
-		SPEED_L_DES_CACHE=SPEED_L_DES; 
-		TIMEOUT_MS_CACHE=TIMEOUT_MS; 
-	} 
-	int j=0; 
-	while(j<Number_Parameters) 
-	{ 
-			switch(Table_Parameters_Letter[j]) 
-			{ 
-				case 'R': 
-					SPEED_R_DES_CACHE=Table_Parameters_Number[j];				 
-					break; 
-				case 'L': 
-					SPEED_L_DES_CACHE=Table_Parameters_Number[j]; 
-					break; 
-				case 'T': 
-					TIMEOUT_MS_CACHE=Table_Parameters_Number[j]; 
-					break; 
-			} 
-			j++; 
-	} 
-	uint8_t Answer[40]; 
-	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE); 
-	Transmit_UART(Answer); 
-	UPDATE_DEST_PARAMETERS=1; 
-} 
-void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{//G2 Rx Ly (PWM) 
-	if(UPDATE_DEST_PARAMETERS==0) 
-	{ 
-		PWM_L_DES_CACHE=PWM_L_DES; 
-		PWM_R_DES_CACHE=PWM_R_DES; 
-		TIMEOUT_MS_CACHE=TIMEOUT_MS; 
-	} 
-	int j=0; 
-	while(j<Number_Parameters) 
-	{ 
-			switch(Table_Parameters_Letter[j]) 
-			{ 
-				case 'R': 
-					PWM_R_DES_CACHE=Table_Parameters_Number[j];				 
-					break; 
-				case 'L': 
-					PWM_L_DES_CACHE=Table_Parameters_Number[j]; 
-					break; 
-				case 'T': 
-					TIMEOUT_MS_CACHE=Table_Parameters_Number[j]; 
-					break; 
-			} 
-			j++; 
-	} 
-	uint8_t Answer[40]; 
-	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",PWM_R_DES_CACHE,PWM_L_DES_CACHE,TIMEOUT_MS_CACHE); 
-	Transmit_UART(Answer); 
-	UPDATE_DEST_PARAMETERS=1; 
-} 
-void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{//G92 Xx Yx Ax 
-	if(UPDATE_POS_PARAMETERS==0) 
-	{ 
-		ANGLE_POS_RAD_CACHE=ANGLE_POS_RAD; 
-		X_POS_MM_CACHE=X_POS_MM; 
-		Y_POS_MM_CACHE=Y_POS_MM; 
-	} 
-	int j=0; 
-	while(j<Number_Parameters) 
-	{ 
-			switch(Table_Parameters_Letter[j]) 
-			{ 
-				case 'X': 
-					X_POS_MM_CACHE=Table_Parameters_Number[j];				 
-					break; 
-				case 'Y': 
-					Y_POS_MM_CACHE=Table_Parameters_Number[j]; 
-					break; 
-				case 'A': 
-					ANGLE_POS_RAD_CACHE=Table_Parameters_Number[j]*PI/180; 
-					break; 
-			} 
-			j++; 
-	} 
-	uint8_t Answer[40]; 
-	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE); 
-	Transmit_UART(Answer); 
-	UPDATE_POS_PARAMETERS=1; 
-} 
-void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
-{// M3  
-	if(UPDATE_DEST_PARAMETERS==0) 
-	{ 
-	 REGULATOR_CACHE=REGULATOR; 
-	} 
-	int j=0; 
-	SENSOR_ENABLED=0x000F; 
-	while(j<Number_Parameters) 
-	{ 
-		 
-			switch(Table_Parameters_Letter[j]) 
-			{ 
-				case 'H': 
-					REGULATOR_CACHE=(CONTROL_TYPE) Table_Parameters_Number[j];				 
-				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control} 
-					break; 
-				case 'S': 
-					SENSOR_ENABLED= Table_Parameters_Number[j];				 
-				//CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Control} 
-					break; 
-			} 
-			j++; 
-	} 
-	uint8_t Answer[40]; 
-	sprintf((char*)Answer,"OK: M3 H%d S%d\r\n",REGULATOR_CACHE,SENSOR_ENABLED); 
-	Transmit_UART(Answer); 
-} 
+}  
 void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
 {// M15
 	#define A_Sensor 0

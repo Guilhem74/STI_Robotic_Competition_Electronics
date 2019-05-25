@@ -18,6 +18,7 @@ typedef enum CONTROL_TYPE {No_Control, PWM_Control, Speed_Control,Position_Contr
 typedef enum Sensors_Letter {A, B, C,D,E,F,G,H,I,J,K,L,M}Sensors_Letter;
 extern uint16_t SENSOR_ENABLED;
 extern uint16_t SENSOR_DETECTED; 
+extern uint8_t BACKWARD, BACKWARD_CACHE; 
 
 extern float SPEED_R_DES,SPEED_R_DES_CACHE;
 extern float SPEED_L_DES,SPEED_L_DES_CACHE;
