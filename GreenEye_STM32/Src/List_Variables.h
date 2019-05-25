@@ -6,15 +6,15 @@
 #include "math.h"
 #define PI 3.1415f
 /* Communication Variables*/
-#define SIZE_UART 64 
-uint8_t UART_RX_Analyse[SIZE_UART]=""; 
-#define SIZE_BUFFER 8 
-uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART]; 
-uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART]; 
+#define SIZE_UART 64
+uint8_t UART_RX_Analyse[SIZE_UART*10]=""; 
+#define SIZE_BUFFER 8
+uint8_t BUFFER_RX[SIZE_BUFFER+1][SIZE_UART]; 
+uint8_t BUFFER_TX[SIZE_BUFFER+1][SIZE_UART]; 
 uint8_t Indice_Start_RX=0,Indice_Stop_RX=0; 
 uint8_t Indice_Start_TX=0,Indice_Stop_TX=0; 
-uint8_t BUFFER_RX_UART2[SIZE_BUFFER][SIZE_UART]; 
-uint8_t BUFFER_TX_UART2[SIZE_BUFFER][SIZE_UART]; 
+uint8_t BUFFER_RX_UART2[SIZE_BUFFER+1][SIZE_UART]; 
+uint8_t BUFFER_TX_UART2[SIZE_BUFFER+1][SIZE_UART]; 
 uint8_t Indice_Start_RX_UART2=0,Indice_Stop_RX_UART2=0; 
 uint8_t Indice_Start_TX_UART2=0,Indice_Stop_TX_UART2=0; 
 uint16_t SENSOR_DETECTED;

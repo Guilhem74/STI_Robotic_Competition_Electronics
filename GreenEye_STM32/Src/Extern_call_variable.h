@@ -6,10 +6,10 @@
 #define PI 3.1415f
 
 #define SIZE_UART 64
-extern uint8_t UART_RX_Analyse[SIZE_UART];
+extern uint8_t UART_RX_Analyse[SIZE_UART*10];
 #define SIZE_BUFFER 8
-extern uint8_t BUFFER_RX[SIZE_BUFFER][SIZE_UART],BUFFER_RX_UART2[SIZE_BUFFER][SIZE_UART];
-extern uint8_t BUFFER_TX[SIZE_BUFFER][SIZE_UART],BUFFER_TX_UART2[SIZE_BUFFER][SIZE_UART];
+extern uint8_t BUFFER_RX[SIZE_BUFFER+1][SIZE_UART],BUFFER_RX_UART2[SIZE_BUFFER+1][SIZE_UART];
+extern uint8_t BUFFER_TX[SIZE_BUFFER+1][SIZE_UART],BUFFER_TX_UART2[SIZE_BUFFER+1][SIZE_UART];
 extern uint8_t Indice_Start_RX,Indice_Stop_RX;
 extern uint8_t Indice_Start_RX_UART2,Indice_Stop_RX_UART2;
 extern uint8_t Indice_Start_TX,Indice_Stop_TX;

@@ -18,33 +18,49 @@ void Transmit_UART(uint8_t * T)
 }  
 void Analyse_RX_Buffer() 
 { 
+	static int Indice_RX_Analyse=0;
+	if(Indice_RX_Analyse>=63)
+	{
+		Indice_RX_Analyse=0;
+		for(int i=0;i<SIZE_UART;i++) 
+			UART_RX_Analyse[i]='\0';		
+	}
 	if(Indice_Start_RX!=Indice_Stop_RX) 
 	{//New message to Analyse 
-			strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX[Indice_Start_RX]); 
-			for(int i=0;i<SIZE_UART;i++) 
-				BUFFER_RX[Indice_Start_RX][i]='\0';	 
-			strcpy((char *) BUFFER_RX[Indice_Start_RX]," "); 
+			int j=0;
+			while(BUFFER_RX_UART2[Indice_Start_RX_UART2][j]!='\n' && BUFFER_RX_UART2[Indice_Start_RX_UART2][j]!='\0'  && j<64)
+			{
+				UART_RX_Analyse[Indice_RX_Analyse]=BUFFER_RX_UART2[Indice_Start_RX_UART2][j];
+				Indice_RX_Analyse++;
+				j++;
+			}
 			Indice_Start_RX=(Indice_Start_RX+1)%(SIZE_BUFFER); 
 	}else if(Indice_Start_RX_UART2!=Indice_Stop_RX_UART2) 
 	{ 
-		strcat((char *)UART_RX_Analyse,(char *) BUFFER_RX_UART2[Indice_Start_RX_UART2]); 
-		for(int i=0;i<SIZE_UART;i++) 
-			BUFFER_RX_UART2[Indice_Start_RX_UART2][i]='\0';	 
+		int j=0;
+		while(BUFFER_RX_UART2[Indice_Start_RX_UART2][j]!='\n' && BUFFER_RX_UART2[Indice_Start_RX_UART2][j]!='\0'  && j<64)
+		{
+			UART_RX_Analyse[Indice_RX_Analyse]=BUFFER_RX_UART2[Indice_Start_RX_UART2][j];
+			BUFFER_RX_UART2[Indice_Start_RX_UART2][j]='\0';
+			Indice_RX_Analyse++;
+			j++;
+		}
 		Indice_Start_RX_UART2=(Indice_Start_RX_UART2+1)%(SIZE_BUFFER); 
 	} 
 	else 
 		return; 
 	uint8_t AnalysisEOF=0; 
-	for(int i=0;i<SIZE_UART;i++) 
+	for(int i=0;i<Indice_RX_Analyse;i++) 
 		{ 
-			if(UART_RX_Analyse[i]=='\n') 
+			if(UART_RX_Analyse[i]=='\r') 
 				AnalysisEOF=1; 
 		} 
 	if(AnalysisEOF==1) 
 	{ 
 		String_Analysis(UART_RX_Analyse); 
 		for(int i=0;i<SIZE_UART;i++) 
-			UART_RX_Analyse[i]='\0';		 
+			UART_RX_Analyse[i]='\0';		
+		Indice_RX_Analyse=0;
 	} 
  
 		 

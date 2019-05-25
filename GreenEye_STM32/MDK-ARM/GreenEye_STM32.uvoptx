@@ -157,9 +157,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>29</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134220630</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\Communication_function.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GreenEye_STM32\../Src/Communication_function.c\29</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>384</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134220808</Address>
+          <Address>134220816</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -171,11 +187,11 @@
           <Expression>\\GreenEye_STM32\../Src/Control_Function.c\384</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134233360</Address>
+          <Address>134233368</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,11 +203,11 @@
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\1524</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>3</Number>
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134234304</Address>
+          <Address>134234312</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -203,23 +219,23 @@
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\874</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>4</Number>
           <Type>0</Type>
-          <LineNumber>2371</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134237858</Address>
+          <LineNumber>31</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</Filename>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Src\Communication_function.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\2371</Expression>
+          <Expression></Expression>
         </Bp>
         <Bp>
-          <Number>4</Number>
+          <Number>5</Number>
           <Type>0</Type>
           <LineNumber>376</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -235,7 +251,7 @@
           <Expression></Expression>
         </Bp>
         <Bp>
-          <Number>5</Number>
+          <Number>6</Number>
           <Type>0</Type>
           <LineNumber>381</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -251,7 +267,7 @@
           <Expression></Expression>
         </Bp>
         <Bp>
-          <Number>6</Number>
+          <Number>7</Number>
           <Type>0</Type>
           <LineNumber>387</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -317,6 +333,36 @@
           <count>9</count>
           <WinNumber>1</WinNumber>
           <ItemText>Average_Speed_L</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Indice_Start_RX_UART2</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>UART_RX_Analyse</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Indice_Stop_RX_UART2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Indice_Start_RX_UART2,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Indice_Start_RX</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Indice_Stop_RX</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

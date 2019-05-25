@@ -313,10 +313,6 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
 		if (__HAL_UART_GET_FLAG (&huart2, UART_FLAG_IDLE))
 		{//Got some delay in the communication, time to check if the frame is full
 			//Store what has been received
@@ -326,6 +322,10 @@ void USART2_IRQHandler(void)
 			HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
 			__HAL_UART_CLEAR_IDLEFLAG (&huart2);
 		}
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
   /* USER CODE END USART2_IRQn 1 */
 }
 
