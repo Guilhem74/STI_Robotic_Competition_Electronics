@@ -172,18 +172,25 @@ int main(void)
 	HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
 	uint8_t Answer[40];
 	sprintf((char*)Answer,"STM32_Primary");
-	Transmit_UART(Answer);
+	Transmit_UART_2(Answer);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	/* Communication with :Transmit_UART();)*/
+	/* Communication with :Transmit_UART_2();)*/
   while (1)
   {
     /* USER CODE END WHILE */
-
+		
     /* USER CODE BEGIN 3 */
-
+		static int Count=0;
+		Count++;
+		if(Count>40000)
+		{
+			uint8_t Answer[40]; 
+			sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T3 S%d R%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED,BACKWARD);  
+			Transmit_UART_6(Answer); 
+		}
 	//TIM2->CCR2=abs(Output_Right_Motor);
 					//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
 

@@ -1,20 +1,21 @@
 #include "Communication_function.h" 
 extern CONTROL_TYPE REGULATOR_CACHE,REGULATOR; 
  
-void Transmit_UART(uint8_t * T)  
+void Transmit_UART_2(uint8_t * T)  
 {  
-		strcpy((char*)BUFFER_TX[Indice_Stop_TX],(char*)T); 
 		strcpy((char*)BUFFER_TX_UART2[Indice_Stop_TX_UART2],(char*)T); 
- 
-		Indice_Stop_TX=(Indice_Stop_TX+1)%(SIZE_BUFFER); 
 		Indice_Stop_TX_UART2=(Indice_Stop_TX_UART2+1)%(SIZE_BUFFER); 
- 
-		if(huart6.gState == HAL_UART_STATE_READY) 
-				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX])); 
 		if(huart2.gState == HAL_UART_STATE_READY) 
 				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX_UART2[Indice_Start_TX_UART2],strlen((char*)BUFFER_TX_UART2[Indice_Start_TX_UART2])); 
  
 	 
+}  
+void Transmit_UART_6(uint8_t * T)  
+{  
+		strcpy((char*)BUFFER_TX[Indice_Stop_TX],(char*)T); 
+		Indice_Stop_TX=(Indice_Stop_TX+1)%(SIZE_BUFFER);  
+		if(huart6.gState == HAL_UART_STATE_READY) 
+				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX])); 
 }  
 void Analyse_RX_Buffer() 
 { 
@@ -70,8 +71,8 @@ void String_Analysis(uint8_t* Input)
 	int char_counter = 0; 
 	char letter='\0'; 
 	float value=-1; 
-	static float Table_values[20]={'\0'}; 
-	static uint8_t Table_Letter[20]={0}; 
+	 float Table_values[20]={'\0'}; 
+	 uint8_t Table_Letter[20]={0}; 
 		int Parameters_N=0; 
 	while (next_statement(&letter, &value, (char *) Input, &char_counter)) 
 	{ 
@@ -143,15 +144,10 @@ void String_Analysis(uint8_t* Input)
 				break; 
 		default : 
 				sprintf((char*)Answer,"Unrecognized %s\r\n",UART_RX_Analyse); 
-				Transmit_UART(Answer); 
+				Transmit_UART_2(Answer); 
 			break; 
 	} 
-	int j=0; 
-	for(j=0;j<20;j++) 
-	{ 
-		Table_values[j]='\0'; 
-		Table_Letter[j]=0; 
-	} 
+
 } 
 void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
 {//O1 H0/1 Sx 
@@ -188,7 +184,7 @@ void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	{ 
 		sprintf((char*)Answer,"KO: Select a tool(H0 or H1)\r\n "); 
 	} 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 } 
 void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
 {//G0 Xx Yx Ax Tx R0/1 
@@ -225,7 +221,7 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}  
 	uint8_t Answer[40];  
 	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f T=%0.2f B=%d\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE,TIMEOUT_MS_CACHE,BACKWARD_CACHE);  
-	Transmit_UART(Answer);  
+	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
 	  
 }  
@@ -256,7 +252,7 @@ void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}  
 	uint8_t Answer[40];  
 	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE);  
-	Transmit_UART(Answer);  
+	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
 }  
 void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
@@ -286,7 +282,7 @@ void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}  
 	uint8_t Answer[40];  
 	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",PWM_R_DES_CACHE,PWM_L_DES_CACHE,TIMEOUT_MS_CACHE);  
-	Transmit_UART(Answer);  
+	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
 }  
 void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
@@ -316,7 +312,7 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 	}  
 	uint8_t Answer[40];  
 	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE);  
-	Transmit_UART(Answer);  
+	Transmit_UART_2(Answer);  
 	UPDATE_POS_PARAMETERS=1;  
 }  
 void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
@@ -345,7 +341,7 @@ void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}  
 	uint8_t Answer[40];  
 	sprintf((char*)Answer,"OK: M3 H%d S%d\r\n",REGULATOR_CACHE,SENSOR_ENABLED);  
-	Transmit_UART(Answer);  
+	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1; 
 }  
 void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
@@ -379,19 +375,19 @@ void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 			{ 
 				case 1: 		
 					sprintf((char*)Answer,"M15, BACK: %d;%d;%d;%d\r\n",Result_ADC[A_Sensor], Result_ADC[B_Sensor],Result_ADC[C_Sensor],Result_ADC[D_Sensor]); 
-					Transmit_UART(Answer); 			 
+					Transmit_UART_2(Answer); 			 
 					break; 
 				case 2: 		
 					sprintf((char*)Answer,"M15, LEFT: %d;%d;%d\r\n",Result_ADC[G_Sensor], Result_ADC[H_Sensor],Result_ADC[J_Sensor]); 
-					Transmit_UART(Answer); 			 
+					Transmit_UART_2(Answer); 			 
 					break; 
 				case 4: 		
 					sprintf((char*)Answer,"M15, RIGHT: %d;%d;%d\r\n",Result_ADC[E_Sensor], Result_ADC[I_Sensor],Result_ADC[F_Sensor]); 
-					Transmit_UART(Answer); 			 
+					Transmit_UART_2(Answer); 			 
 					break; 
 				case 8: 		
 					sprintf((char*)Answer,"M15, FRONT: %d;%d;%d\r\n",Result_ADC[K_Sensor], Result_ADC[L_Sensor],Result_ADC[M_Sensor]); 
-					Transmit_UART(Answer); 			 
+					Transmit_UART_2(Answer); 			 
 					break; 
 			} 
 			j++; 
@@ -422,7 +418,7 @@ void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 	} 
 	uint8_t Answer[40]; 
 	sprintf((char*)Answer,"OK: M92 Tics/MM S=%0.2f SpacingWheels=%0.2f\r\n",TICS_2_MM_CACHE,SPACING_WHEELS_CACHE); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 	UPDATE_POS_PARAMETERS=1; 
 } 
 void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
@@ -432,7 +428,7 @@ void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	TIM2->CCR2=0;//Set PWM to 0 
 	uint8_t Answer[40]; 
 	sprintf((char*)Answer,"OK: Emergency Stop \r\n"); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 } 
 void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
 {// M135 Sx 
@@ -440,7 +436,7 @@ void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 		LOOP_CONTROL_TIMING_HZ=Table_Parameters_Number[0]; 
 	uint8_t Answer[40]; 
 	sprintf((char*)Answer,"OK: Timing loop : %0.2f \r\n",LOOP_CONTROL_TIMING_HZ); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 } 
 void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
 {// M201 H0/1 Sx Ax Bx  
@@ -492,7 +488,7 @@ void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 		sprintf((char*)Answer,"OK: A_Profil S=%d A=%d B=%d \r\n",SPEED_MAX_ANGLE_MM_S_CACHE,ACCELERATION_MAX_ANGLE_MM_S2_CACHE,BRAKING_MAX_ANGLE_MM_S2_CACHE); 
 	else 
 		sprintf((char*)Answer,"KO: No Profil selected (H0 or H1) \r\n"); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 	UPDATE_CONTROL_PARAMETERS=1; 
 } 
 void COMMAND_M202(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
@@ -515,7 +511,7 @@ void COMMAND_M202(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	} 
 	uint8_t Answer[40]; 
 	sprintf((char*)Answer,"Ok: Bool_D_mm=%0.2f \r\n",FINAL_BOOL_DISTANCE_MM_CACHE); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 	UPDATE_CONTROL_PARAMETERS=1; 
 } 
 void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
@@ -577,7 +573,7 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	  sprintf((char*)Answer,"OK: D_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_DISTANCE_CACHE,I_DISTANCE_CACHE,D_DISTANCE_CACHE); 
 	else 
 		sprintf((char*)Answer,"KO: No PID type selected (H0 or H1 or H2) \r\n"); 
-	Transmit_UART(Answer); 
+	Transmit_UART_2(Answer); 
 	UPDATE_CONTROL_PARAMETERS=1; 
 } 
  

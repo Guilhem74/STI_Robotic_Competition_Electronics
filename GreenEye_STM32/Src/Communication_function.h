@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include "main.h"
 #include <string.h>
-void Transmit_UART(uint8_t * T) ;
+void Transmit_UART_2(uint8_t * T) ;
+void Transmit_UART_6(uint8_t * T);
 void Analyse_RX_Buffer(void);
 int read_double(char *line, int *char_counter, float *double_ptr);
 int next_statement(char *letter, float *double_ptr, char *line, int *char_counter);

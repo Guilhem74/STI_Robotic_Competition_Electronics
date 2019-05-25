@@ -145,7 +145,7 @@ void Control(void)//100hz
 						{ 
 							uint8_t Answer[40]; 
 							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
-							Transmit_UART(Answer);	 
+							Transmit_UART_2(Answer);	 
 							Arrived_Transmitted=1; 
 							REGULATOR_CACHE=No_Control;// Stall instead ? 
 						} 
@@ -209,7 +209,7 @@ void Control(void)//100hz
 					{ 
 						uint8_t Answer[40]; 
 						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
-						Transmit_UART(Answer); 
+						Transmit_UART_2(Answer); 
 							Arrived_Transmitted=1;  
 					} 
 					REGULATOR_CACHE=No_Control;// Stall instead ? 
@@ -260,7 +260,7 @@ void Control(void)//100hz
 					{  
 						uint8_t Answer[40];  
 						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T2 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);   
-						Transmit_UART(Answer);	  
+						Transmit_UART_2(Answer);	  
 						Arrived_Transmitted=1;  
 						REGULATOR_CACHE=No_Control;// Stall instead ?  
 					}  
@@ -291,7 +291,7 @@ float PID_R(float Error) {
       D_SPEED * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
-//	Transmit_UART(Answer);
+//	Transmit_UART_2(Answer);
   
 
   return Output;
@@ -318,7 +318,7 @@ float PID_L(float Error) {
       D_SPEED * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
-//	Transmit_UART(Answer);
+//	Transmit_UART_2(Answer);
   
 
   return Output;
@@ -345,7 +345,7 @@ float PID_ANGLE(float Error) {
       D_ANGLE * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
-//	Transmit_UART(Answer);
+//	Transmit_UART_2(Answer);
   
 
   return Output;
@@ -373,7 +373,7 @@ float PID_DISTANCE(float Error) {
       D_DISTANCE * Delta_Error; // On determine la commande a envoyer
 //	uint8_t Answer[40];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
-//	Transmit_UART(Answer);
+//	Transmit_UART_2(Answer);
   
   return Output;
 }
