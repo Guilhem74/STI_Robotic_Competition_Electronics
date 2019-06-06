@@ -79,6 +79,7 @@
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim9;
 extern TIM_HandleTypeDef htim10;
 extern TIM_HandleTypeDef htim11;
 extern DMA_HandleTypeDef hdma_usart2_rx;
@@ -272,6 +273,21 @@ void ADC_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM1 break interrupt and TIM9 global interrupt.
+  */
+void TIM1_BRK_TIM9_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_BRK_TIM9_IRQn 0 */
+
+  /* USER CODE END TIM1_BRK_TIM9_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  HAL_TIM_IRQHandler(&htim9);
+  /* USER CODE BEGIN TIM1_BRK_TIM9_IRQn 1 */
+		Analyse_RX_Buffer();
+  /* USER CODE END TIM1_BRK_TIM9_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
   */
 void TIM1_UP_TIM10_IRQHandler(void)
@@ -396,15 +412,6 @@ void USART6_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {//End of TX transmission
-    if (huart->Instance == USART6)  // change USART instance
-    {
-			Indice_Start_TX=(Indice_Start_TX+1)%(SIZE_BUFFER);
-			if(Indice_Start_TX!=Indice_Stop_TX && huart6.gState == HAL_UART_STATE_READY)
-			{
-				HAL_UART_Transmit_DMA(&huart6,BUFFER_TX[Indice_Start_TX],strlen((char*)BUFFER_TX[Indice_Start_TX]));
-				strcpy((char *)BUFFER_TX[Indice_Start_TX], "");
-			}
-    }
 		if (huart->Instance == USART2)  // change USART instance
     {
 			Indice_Start_TX_UART2=(Indice_Start_TX_UART2+1)%(SIZE_BUFFER);

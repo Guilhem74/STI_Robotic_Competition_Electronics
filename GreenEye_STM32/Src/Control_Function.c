@@ -143,7 +143,7 @@ void Control(void)//100hz
 						Error_Distance=0;	 
 						if(REGULATOR ==Position_Control && Arrived_Transmitted==0) 
 						{ 
-							uint8_t Answer[40]; 
+							uint8_t Answer[64]; 
 							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
 							Transmit_UART_2(Answer);	 
 							Arrived_Transmitted=1; 
@@ -207,7 +207,7 @@ void Control(void)//100hz
 				{ 
 					if(REGULATOR!=No_Control) 
 					{ 
-						uint8_t Answer[40]; 
+						uint8_t Answer[64]; 
 						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
 						Transmit_UART_2(Answer); 
 							Arrived_Transmitted=1;  
@@ -258,13 +258,23 @@ void Control(void)//100hz
 					}		  
 					if(Average_Speed_R<2*SIZE_SPEED_ARRAY && Average_Speed_L<2*SIZE_SPEED_ARRAY && SENSOR_DETECTED>1)  
 					{  
-						uint8_t Answer[40];  
+						uint8_t Answer[64];  
 						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T2 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);   
 						Transmit_UART_2(Answer);	  
 						Arrived_Transmitted=1;  
 						REGULATOR_CACHE=No_Control;// Stall instead ?  
 					}  
 				}  
+		static int Count=0; 
+		if(Count>2) 
+		{ 
+			Count=0; 
+			uint8_t Answer[64];  
+			sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);  
+			HAL_UART_Transmit(&huart6,Answer,strlen((char*)Answer),1000); 
+		} 
+		Count++; 
+ 
 				 
 				 
 } 
@@ -289,7 +299,7 @@ float PID_R(float Error) {
 	float Output =
       P_SPEED * Local_Error + I_SPEED * (Sum_Error)  +
       D_SPEED * Delta_Error; // On determine la commande a envoyer
-//	uint8_t Answer[40];
+//	uint8_t Answer[64];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART_2(Answer);
   
@@ -316,7 +326,7 @@ float PID_L(float Error) {
 	float Output =
       P_SPEED * Local_Error + I_SPEED * Sum_Error  +
       D_SPEED * Delta_Error; // On determine la commande a envoyer
-//	uint8_t Answer[40];
+//	uint8_t Answer[64];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART_2(Answer);
   
@@ -343,7 +353,7 @@ float PID_ANGLE(float Error) {
 	float Output =
       P_ANGLE * Local_Error + I_ANGLE * Sum_Error  +
       D_ANGLE * Delta_Error; // On determine la commande a envoyer
-//	uint8_t Answer[40];
+//	uint8_t Answer[64];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART_2(Answer);
   
@@ -371,7 +381,7 @@ float PID_DISTANCE(float Error) {
 	float Output =
       P_DISTANCE * Local_Error + I_DISTANCE * Sum_Error  +
       D_DISTANCE * Delta_Error; // On determine la commande a envoyer
-//	uint8_t Answer[40];
+//	uint8_t Answer[64];
 //	sprintf((char*)Answer,"%0.2f;%0.2f;%0.2f;%0.2f\r\n",Local_Error,Delta_Error,Sum_Error,Output);
 //	Transmit_UART_2(Answer);
   
@@ -395,13 +405,20 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	#define L_Sensor 11
 	#define M_Sensor 12
 	int Threshold_Distance=1350;
+	int Threshold_Distance_Front_Side=1250;
+	int Threshold_Side_For_Front=2050;
+
 	int Threshold_Distance_AR=1750; 
 	int Threshold_Angle=1500; 
+
 	uint16_t Threshold_Array[13]={Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Distance,Threshold_Distance,Threshold_Distance};
-	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance) && ((SENSOR_ENABLED & 0x0008)!=0)) 
+	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance_Front_Side ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance_Front_Side 
+		|| (Result_ADC[E]>Threshold_Side_For_Front && !(Result_ADC[I]>Threshold_Side_For_Front))  || (Result_ADC[G]>Threshold_Side_For_Front && !(Result_ADC[J]>Threshold_Side_For_Front))) 
+		&& ((SENSOR_ENABLED & 0x0008)!=0)) 
 	{//FRONT 
 		*Error_Distance=0; 
 	}
+	
 	else if(*Error_Distance<0 && (Result_ADC[A_Sensor]>Threshold_Distance_AR ||  Result_ADC[B_Sensor]>Threshold_Distance_AR || Result_ADC[C_Sensor]>Threshold_Distance_AR || Result_ADC[D_Sensor]>Threshold_Distance_AR) && ((SENSOR_ENABLED & 0x0001)!=0)) 
 	{//BACK 
 		*Error_Distance=0; 

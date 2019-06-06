@@ -159,18 +159,15 @@ int main(void)
 	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_4);//Conversion adc
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim9); // 100 hz interrupt
 	HAL_TIM_Base_Start_IT(&htim10); // 100 hz interrupt
 	HAL_TIM_Base_Start_IT(&htim11); //  hz interrupt
 	HAL_ADC_Start_DMA(&hadc1,Result_ADC,13);
-	__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);   // Enable IDLE Line Interrupt
-	__HAL_DMA_ENABLE_IT (&hdma_usart6_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
-	hdma_usart6_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
-	HAL_UART_Receive_DMA (&huart6, BUFFER_RX[Indice_Stop_RX], SIZE_UART);
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);   // Enable IDLE Line Interrupt
 	__HAL_DMA_ENABLE_IT (&hdma_usart2_rx, DMA_IT_TC);  // Enable DMA Complete Interruption (DMA is full)
 	hdma_usart2_rx.Instance->CR &= ~DMA_SxCR_HTIE;  // Disable DMA Half Complete Interruption (DMA is half full)
 	HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
-	uint8_t Answer[40];
+	uint8_t Answer[64];
 	sprintf((char*)Answer,"STM32_Primary");
 	Transmit_UART_2(Answer);
   /* USER CODE END 2 */
@@ -181,20 +178,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		
+
     /* USER CODE BEGIN 3 */
-		static int Count=0;
-		Count++;
-		if(Count>40000)
-		{
-			uint8_t Answer[40]; 
-			sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T3 S%d R%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED,BACKWARD);  
-			Transmit_UART_6(Answer); 
-		}
+		
 	//TIM2->CCR2=abs(Output_Right_Motor);
 					//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_12,GPIO_PIN_RESET);
 
-		Analyse_RX_Buffer();
 	}
   /* USER CODE END 3 */
 }
@@ -574,7 +563,7 @@ static void MX_TIM9_Init(void)
 
   /* USER CODE END TIM9_Init 1 */
   htim9.Instance = TIM9;
-  htim9.Init.Prescaler = 4;
+  htim9.Init.Prescaler = 25;
   htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim9.Init.Period = 42300;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -706,7 +695,7 @@ static void MX_USART6_UART_Init(void)
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;
-  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.Mode = UART_MODE_TX;
   huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart6.Init.OverSampling = UART_OVERSAMPLING_16;
   if (HAL_UART_Init(&huart6) != HAL_OK)

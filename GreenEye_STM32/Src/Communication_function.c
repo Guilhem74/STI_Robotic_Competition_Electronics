@@ -82,7 +82,7 @@ void String_Analysis(uint8_t* Input)
 	} 
 	if(Parameters_N==0) 
 		return; 
-	uint8_t Answer[40]=""; 
+	uint8_t Answer[64]=""; 
  
 	switch(Table_Letter[0]) 
 	{ 
@@ -167,7 +167,7 @@ void COMMAND_O1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	} 
 	 
  
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	if(Type==1) 
 	{ 
 		CONTROL_ENABLED=0; 
@@ -219,8 +219,8 @@ void COMMAND_G0(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 			}  
 			j++;  
 	}  
-	uint8_t Answer[40];  
-	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f T=%0.2f B=%d\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE,TIMEOUT_MS_CACHE,BACKWARD_CACHE);  
+	uint8_t Answer[64];  
+	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f\r\n",X_DES_MM_CACHE,Y_DES_MM_CACHE,ANGLE_DES_RAD_CACHE);  
 	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
 	  
@@ -250,7 +250,7 @@ void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 			}  
 			j++;  
 	}  
-	uint8_t Answer[40];  
+	uint8_t Answer[64];  
 	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE);  
 	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
@@ -280,7 +280,7 @@ void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 			}  
 			j++;  
 	}  
-	uint8_t Answer[40];  
+	uint8_t Answer[64];  
 	sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",PWM_R_DES_CACHE,PWM_L_DES_CACHE,TIMEOUT_MS_CACHE);  
 	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
@@ -310,7 +310,7 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 			}  
 			j++;  
 	}  
-	uint8_t Answer[40];  
+	uint8_t Answer[64];  
 	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE);  
 	Transmit_UART_2(Answer);  
 	UPDATE_POS_PARAMETERS=1;  
@@ -339,7 +339,7 @@ void COMMAND_M3(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 			}  
 			j++;  
 	}  
-	uint8_t Answer[40];  
+	uint8_t Answer[64];  
 	sprintf((char*)Answer,"OK: M3 H%d S%d\r\n",REGULATOR_CACHE,SENSOR_ENABLED);  
 	Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1; 
@@ -361,7 +361,7 @@ void COMMAND_M15(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 	#define M_Sensor 12
 	int type=-1;
 	int j=0;
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	while(j<Number_Parameters) 
 	{ 
 		 
@@ -416,7 +416,7 @@ void COMMAND_M92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 			} 
 			j++; 
 	} 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	sprintf((char*)Answer,"OK: M92 Tics/MM S=%0.2f SpacingWheels=%0.2f\r\n",TICS_2_MM_CACHE,SPACING_WHEELS_CACHE); 
 	Transmit_UART_2(Answer); 
 	UPDATE_POS_PARAMETERS=1; 
@@ -426,7 +426,7 @@ void COMMAND_M112(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 	CONTROL_ENABLED=0; 
 	TIM2->CCR1=0;//Set PWM to 0 
 	TIM2->CCR2=0;//Set PWM to 0 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	sprintf((char*)Answer,"OK: Emergency Stop \r\n"); 
 	Transmit_UART_2(Answer); 
 } 
@@ -434,7 +434,7 @@ void COMMAND_M135(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 {// M135 Sx 
 	if(Table_Parameters_Letter[0]=='S') 
 		LOOP_CONTROL_TIMING_HZ=Table_Parameters_Number[0]; 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	sprintf((char*)Answer,"OK: Timing loop : %0.2f \r\n",LOOP_CONTROL_TIMING_HZ); 
 	Transmit_UART_2(Answer); 
 } 
@@ -481,7 +481,7 @@ void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 			} 
 			j++; 
 	} 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	if(Type==0)//Distance parameters 
 		sprintf((char*)Answer,"OK: D_Profil S=%d A=%d B=%d \r\n",SPEED_MAX_DISTANCE_MM_S_CACHE,ACCELERATION_MAX_DISTANCE_MM_S2_CACHE,BRAKING_MAX_DISTANCE_MM_S2_CACHE); 
   else if(Type==1)//Angle parameters 
@@ -509,7 +509,7 @@ void COMMAND_M202(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 			} 
 			j++; 
 	} 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	sprintf((char*)Answer,"Ok: Bool_D_mm=%0.2f \r\n",FINAL_BOOL_DISTANCE_MM_CACHE); 
 	Transmit_UART_2(Answer); 
 	UPDATE_CONTROL_PARAMETERS=1; 
@@ -564,7 +564,7 @@ void COMMAND_M301(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 			} 
 			j++; 
 	} 
-	uint8_t Answer[40]; 
+	uint8_t Answer[64]; 
 	if(Type==0)//Distance PID selected 
 		sprintf((char*)Answer,"OK: S_PID P=%0.2f I=%0.2f D=%0.2f \r\n",P_SPEED_CACHE,I_SPEED_CACHE,D_SPEED_CACHE); 
 	else if(Type==1) 
