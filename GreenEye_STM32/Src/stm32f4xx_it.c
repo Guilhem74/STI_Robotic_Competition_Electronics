@@ -417,6 +417,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 			Indice_Start_TX_UART2=(Indice_Start_TX_UART2+1)%(SIZE_BUFFER);
 			if(Indice_Start_TX_UART2!=Indice_Stop_TX_UART2 && huart2.gState == HAL_UART_STATE_READY)
 			{
+				for(int j=0;j<400;j++);
 				HAL_UART_Transmit_DMA(&huart2,BUFFER_TX_UART2[Indice_Start_TX_UART2],strlen((char*)BUFFER_TX_UART2[Indice_Start_TX_UART2]));
 				strcpy((char *)BUFFER_TX_UART2[Indice_Start_TX_UART2], "");
 			}

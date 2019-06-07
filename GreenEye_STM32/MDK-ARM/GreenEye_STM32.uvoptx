@@ -157,6 +157,22 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>388</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>134220824</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\Control_Function.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GreenEye_STM32\../Src/Control_Function.c\388</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>31</LineNumber>
           <EnabledFlag>0</EnabledFlag>
           <Address>134220666</Address>
@@ -171,11 +187,11 @@
           <Expression>\\GreenEye_STM32\../Src/Communication_function.c\31</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>1524</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134233808</Address>
+          <Address>134233644</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,11 +203,11 @@
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\1524</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>3</Number>
           <Type>0</Type>
           <LineNumber>874</LineNumber>
           <EnabledFlag>0</EnabledFlag>
-          <Address>134234940</Address>
+          <Address>134234776</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -203,7 +219,7 @@
           <Expression>\\GreenEye_STM32\../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\874</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>4</Number>
           <Type>0</Type>
           <LineNumber>29</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -219,7 +235,7 @@
           <Expression>\\GreenEye_STM32\../Src/Communication_function.c\29</Expression>
         </Bp>
         <Bp>
-          <Number>4</Number>
+          <Number>5</Number>
           <Type>0</Type>
           <LineNumber>32</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -233,22 +249,6 @@
           <Filename>..\Src\Communication_function.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\GreenEye_STM32\../Src/Communication_function.c\32</Expression>
-        </Bp>
-        <Bp>
-          <Number>5</Number>
-          <Type>0</Type>
-          <LineNumber>391</LineNumber>
-          <EnabledFlag>0</EnabledFlag>
-          <Address>134220824</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Src\Control_Function.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\GreenEye_STM32\../Src/Control_Function.c\391</Expression>
         </Bp>
         <Bp>
           <Number>6</Number>
@@ -269,7 +269,7 @@
         <Bp>
           <Number>7</Number>
           <Type>0</Type>
-          <LineNumber>383</LineNumber>
+          <LineNumber>380</LineNumber>
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -285,7 +285,7 @@
         <Bp>
           <Number>8</Number>
           <Type>0</Type>
-          <LineNumber>388</LineNumber>
+          <LineNumber>385</LineNumber>
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -301,7 +301,7 @@
         <Bp>
           <Number>9</Number>
           <Type>0</Type>
-          <LineNumber>394</LineNumber>
+          <LineNumber>391</LineNumber>
           <EnabledFlag>0</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>

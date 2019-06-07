@@ -169,7 +169,7 @@ int main(void)
 	HAL_UART_Receive_DMA (&huart2, BUFFER_RX_UART2[Indice_Stop_RX_UART2], SIZE_UART);
 	uint8_t Answer[64];
 	sprintf((char*)Answer,"STM32_Primary");
-	Transmit_UART_2(Answer);
+	//Transmit_UART_2(Answer);
   /* USER CODE END 2 */
 
   /* Infinite loop */

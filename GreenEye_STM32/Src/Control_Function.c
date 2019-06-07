@@ -43,6 +43,7 @@ void Control(void)//100hz
 				static int16_t Encoder_Right_Past_Control=0; 
 				static int16_t Encoder_Left_Past_Control=0; 
 				static uint8_t Arrived_Transmitted=0; 
+				
 				#define	SIZE_SPEED_ARRAY 200 //In seconds * 100 
 				static float Speed_Array_R[SIZE_SPEED_ARRAY]={0}; 
 				static float Speed_Array_L[SIZE_SPEED_ARRAY]={0}; 
@@ -144,7 +145,7 @@ void Control(void)//100hz
 						if(REGULATOR ==Position_Control && Arrived_Transmitted==0) 
 						{ 
 							uint8_t Answer[64]; 
-							sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
+							sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f T0 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
 							Transmit_UART_2(Answer);	 
 							Arrived_Transmitted=1; 
 							REGULATOR_CACHE=No_Control;// Stall instead ? 
@@ -205,14 +206,14 @@ void Control(void)//100hz
 				TIMEOUT_COUNTER++; 
 				if(TIMEOUT_COUNTER>=(LOOP_CONTROL_TIMING_HZ/1000*TIMEOUT_MS)) 
 				{ 
-					if(REGULATOR!=No_Control) 
+					if(REGULATOR!=No_Control && Arrived_Transmitted==0) 
 					{ 
 						uint8_t Answer[64]; 
-						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
-						Transmit_UART_2(Answer); 
-							Arrived_Transmitted=1;  
+						sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
+						Transmit_UART_2(Answer);
+						REGULATOR_CACHE=No_Control;// Stalling						
+						Arrived_Transmitted=1;  
 					} 
-					REGULATOR_CACHE=No_Control;// Stall instead ? 
 				} 
 				/* SPEED Regulation Part*/ 
 				// 09/05/2019 PID with a speed coeff of 1.5 and P10 I1 D0 
@@ -247,22 +248,18 @@ void Control(void)//100hz
 				TIM2->CCR2=(int) fabs(Output_Right_Motor); 
 				TIM2->CCR3=(int) fabs(Output_Left_Motor); 
 				if(REGULATOR ==Position_Control && Arrived_Transmitted==0)  
-				{//Distance error is null, angle error too, Speed right and left too  
-					volatile float Average_Speed_R=0;  
-					volatile float Average_Speed_L=0;  
-					for(int j=0;j<SIZE_SPEED_ARRAY;j++)  
-					{  
-						Average_Speed_R+=fabs(Speed_Array_R[j]);  
-						Average_Speed_L+=fabs(Speed_Array_L[j]);  
-  
-					}		  
-					if(Average_Speed_R<2*SIZE_SPEED_ARRAY && Average_Speed_L<2*SIZE_SPEED_ARRAY && SENSOR_DETECTED>1)  
+				{//Distance error is null, angle error too, Speed right and left too  	  
+					if(fabs(Error_Angle_Deg)<5 && fabs(Error_Distance)<50 && SENSOR_DETECTED>1)  
 					{  
 						uint8_t Answer[64];  
-						sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f T2 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);   
+						sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f T2 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);   
 						Transmit_UART_2(Answer);	  
 						Arrived_Transmitted=1;  
-						REGULATOR_CACHE=No_Control;// Stall instead ?  
+						REGULATOR_CACHE=Speed_Control;// Stalling
+						UPDATE_DEST_PARAMETERS	=1;				
+						SPEED_L_DES_CACHE=0;
+						SPEED_R_DES_CACHE=0;
+						
 					}  
 				}  
 		static int Count=0; 
@@ -270,7 +267,7 @@ void Control(void)//100hz
 		{ 
 			Count=0; 
 			uint8_t Answer[64];  
-			sprintf((char*)Answer,"M0 X%0.2f Y%0.2f A%0.2f\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);  
+			sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);  
 			HAL_UART_Transmit(&huart6,Answer,strlen((char*)Answer),1000); 
 		} 
 		Count++; 
@@ -404,9 +401,9 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	#define K_Sensor 10
 	#define L_Sensor 11
 	#define M_Sensor 12
-	int Threshold_Distance=1350;
-	int Threshold_Distance_Front_Side=1250;
-	int Threshold_Side_For_Front=2050;
+	int Threshold_Distance=1450;
+	int Threshold_Distance_Front_Side=1350;
+	int Threshold_Side_For_Front=2000;
 
 	int Threshold_Distance_AR=1750; 
 	int Threshold_Angle=1500; 
