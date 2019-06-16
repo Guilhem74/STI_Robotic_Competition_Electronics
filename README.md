@@ -62,6 +62,6 @@ In that answer the parameters :
  
 Mechanics Real Life pictures, more information available at https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/
 
-![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/Back_Render.png?raw=true)
-![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/Bottom_Render.png?raw=true)
-![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/Front_Render.png?raw=true)
+![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/RL_Front.jpg?raw=true)
+![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/RL_Side.jpg?raw=true)
+![alt text](https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/blob/master/Pictures/RL_Bottom.jpg?raw=true)
