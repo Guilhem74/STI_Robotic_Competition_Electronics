@@ -4,7 +4,7 @@ Github repository for the embedded code of the STM32 for the STI INTERDISCIPLINA
 
 Team 5 : Green Eye, Winner of 2019 with 250 points.
 
-Embedded code developped by Guilhem AZZANO
+Embedded code developped by Guilhem AZZANO for STM32 Nucleo-F401RE 
 
 Mechanics repository: https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/
 Software repository: https://github.com/Guilhem74/STI_Robotic_Competition_Software/
