@@ -8,14 +8,15 @@ Embedded code developped by Guilhem AZZANO
 
 Mechanics repository: https://github.com/Guilhem74/STI_Robotic_Competition_Mechanics/
 Software repository: https://github.com/Guilhem74/STI_Robotic_Competition_Software/
-Position control with maximum speed customizable and smooth deceleration.
+
+
 
 Multiple control algorithms are available to the user:
-  * Position controller should be used for unknown terrain but well-known goal and robotposition. The robot will try to reach the goal (specified in an absolute coordinate system bytwo coordinates X and Y)
+  * Position controller should be used for unknown terrain but well-known goal and robot position. The robot will try to reach the goal (specified in an absolute coordinate system bytwo coordinates X and Y). Position controlle with maximum speed customizable and smooth deceleration.
   
-  * Speed controller should be used mainly to re-calibrate the robot to a reference point whenthe distance or angle is not known perfectly. We mostly used that controller to re-calibratethe robot against wall or to do long distance when we knew there was no obstacle. To avoid excessive drift against the reference goal. The robot should first move with sensors enabled. It will then stop when sensing an obstacle forward (or Backward if Speed <0). Then the user should disable the obstacle avoidance and move slowly for a short amount of time. The robot will then align itself to the reference point and the user can specify the position of therobot.
+  * Speed controller should be used mainly to re-calibrate the robot to a reference point when the distance or angle is not known perfectly. We mostly used that controller to re-calibrate the robot against wall or to do long distance when we knew there was no obstacle. To avoid excessive drift against the reference goal. The robot should first move with sensors enabled. It will then stop when sensing an obstacle forward (or Backward if Speed <0). Then the user should disable the obstacle avoidance and move slowly for a short amount of time. The robot will then align itself to the reference point and the user can specify the new position of the robot.
   
-  * PWM Mode is mostly for test purposes or brute force behaviour.  If you encounter a casewhere the robot needs to push something, and the speed controller does not behave the wayit should you can then use that mode. It is not a control algorithm, it is mostly about setting a known amount of power in the motors for a known amount of time.
+  * PWM Mode is mostly for test purposes or brute force behaviour.  If you encounter a case where the robot needs to push something, and the speed controller does not behave the way it should you can then use that mode. It is not a control algorithm, it is mostly about setting a known amount of power in the motors for a known amount of time.
  
 Two functions are running at constant frequencies of 100Hz and 1000Hz on the micro-controller. 
   * The fastest function is calculating the robot position by looking at the delta between the previous and the actual encoder value. 
