@@ -41,9 +41,10 @@ Then a timers is setup to generate PWM at a frequency of 20kHz.
 The robot can answer to every command but most of the answers has been disabled to do not overload the communication. M0 answer are usually the expected answer the user must look at "M0 X... Y... A... T... S..." or M0 H2 T..."
 In that answer the parameters :
   * X, Y, A provide the coordinate of the robot in mm and degrees
-  * T equal to 0 (Control position only) means that the robot reached the goal
-    T equal to 1 means that the controller has timeout
-    T equal to 2 means that the robot detect and obstacle and is blocked.
+  * T:
+     * T equal to 0 (Control position only) means that the robot reached the goal
+     * T equal to 1 means that the controller has timeout
+     * T equal to 2 means that the robot detect and obstacle and is blocked.
   * S provide the sensor information, each sensor is represented by a bit, 1 for triggered, in the order MLKJIHFEDCBA
 
 *1 : Parameter A is not implemented, backward movement can still happen if the distance to the goal is <200mm or if the robot cannot turn around.
