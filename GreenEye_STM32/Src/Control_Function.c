@@ -27,8 +27,8 @@ void Update_POS(void)
 				Encoder_Left=TIM3->CNT;
 				int16_t Delta_Encoder_Right=(Encoder_Right-Encoder_Right_Past);
 				int16_t Delta_Encoder_Left=Encoder_Left-Encoder_Left_Past;
-				float Distance=(Delta_Encoder_Right+Delta_Encoder_Left*1.0015)*TICS_2_MM/(2);
-				float Angle_rad=((float)(Delta_Encoder_Right-Delta_Encoder_Left*1.0015)*TICS_2_MM)/(SPACING_WHEELS);
+				float Distance=(Delta_Encoder_Right*1.0015+Delta_Encoder_Left)*TICS_2_MM/(2);
+				float Angle_rad=((float)(Delta_Encoder_Right*1.0015-Delta_Encoder_Left)*TICS_2_MM)/(SPACING_WHEELS);
 				ANGLE_POS_RAD+=Angle_rad;
 				X_POS_MM +=  Distance * cos(ANGLE_POS_RAD);
 				Y_POS_MM +=  Distance * sin(ANGLE_POS_RAD);
@@ -206,7 +206,7 @@ void Control(void)//100hz
 				TIMEOUT_COUNTER++; 
 				if(TIMEOUT_COUNTER>=(LOOP_CONTROL_TIMING_HZ/1000*TIMEOUT_MS)) 
 				{ 
-					if(REGULATOR!=No_Control && Arrived_Transmitted==0) 
+					if(REGULATOR==Position_Control && Arrived_Transmitted==0) 
 					{ 
 						uint8_t Answer[64]; 
 						sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f T1 S%d\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI,SENSOR_DETECTED);  
@@ -214,6 +214,14 @@ void Control(void)//100hz
 						REGULATOR_CACHE=No_Control;// Stalling						
 						Arrived_Transmitted=1;  
 					} 
+					else if(REGULATOR==Speed_Control || REGULATOR==PWM_Control)
+					{
+						uint8_t Answer[64]; 
+						sprintf((char*)Answer," M0 H2 T1\r\n");  
+						Transmit_UART_2(Answer);
+						REGULATOR_CACHE=No_Control;// Stalling						
+						Arrived_Transmitted=1;  
+					}
 				} 
 				/* SPEED Regulation Part*/ 
 				// 09/05/2019 PID with a speed coeff of 1.5 and P10 I1 D0 
@@ -262,16 +270,11 @@ void Control(void)//100hz
 						
 					}  
 				}  
-		static int Count=0; 
-		if(Count>2) 
-		{ 
-			Count=0; 
+
 			uint8_t Answer[64];  
 			sprintf((char*)Answer," M0 X%0.2f Y%0.2f A%0.2f\r\n",X_POS_MM,Y_POS_MM,ANGLE_POS_RAD*180/PI);  
 			HAL_UART_Transmit(&huart6,Answer,strlen((char*)Answer),1000); 
-		} 
-		Count++; 
- 
+
 				 
 				 
 } 
@@ -409,9 +412,10 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 	int Threshold_Angle=1500; 
 
 	uint16_t Threshold_Array[13]={Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Distance_AR,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Angle,Threshold_Distance,Threshold_Distance,Threshold_Distance};
-	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance_Front_Side ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance_Front_Side 
-		|| (Result_ADC[E]>Threshold_Side_For_Front && !(Result_ADC[I]>Threshold_Side_For_Front))  || (Result_ADC[G]>Threshold_Side_For_Front && !(Result_ADC[J]>Threshold_Side_For_Front))) 
-		&& ((SENSOR_ENABLED & 0x0008)!=0)) 
+	/*	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance_Front_Side ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance_Front_Side 
+		|| (Result_ADC[E]>Threshold_Side_For_Front && !(Result_ADC[I]>Threshold_Side_For_Front || Result_ADC[F]>Threshold_Side_For_Front))  || (Result_ADC[G]>Threshold_Side_For_Front && !(Result_ADC[J]>Threshold_Side_For_Front|| Result_ADC[H]>Threshold_Side_For_Front))) 
+		&& ((SENSOR_ENABLED & 0x0008)!=0)) */
+	if(*Error_Distance>0 && (Result_ADC[L_Sensor]>Threshold_Distance_Front_Side ||  Result_ADC[M_Sensor]>Threshold_Distance || Result_ADC[K_Sensor]>Threshold_Distance_Front_Side) && ((SENSOR_ENABLED & 0x0008)!=0)) 
 	{//FRONT 
 		*Error_Distance=0; 
 	}
@@ -436,6 +440,20 @@ float Avoidance(float *Error_Distance,float * Error_Angle_Deg)
 			SENSOR_DETECTED|=1<<i;
 		}
 	}
-
+		int Threshold_Speed_Control=2000;
+	if(REGULATOR==Speed_Control && (Result_ADC[L_Sensor]>Threshold_Speed_Control &&  Result_ADC[M_Sensor]>Threshold_Speed_Control && Result_ADC[K_Sensor]>Threshold_Speed_Control) && (SENSOR_ENABLED & 0x0008)!=0 && R_SPEED_TARGET>0 && L_SPEED_TARGET>0 )
+	{
+			uint8_t Answer[64];
+			sprintf((char*)Answer," M0 H2 T2\r\n");
+			Transmit_UART_2(Answer);
+		REGULATOR_CACHE=No_Control;
+	}
+	else if(REGULATOR==Speed_Control && (Result_ADC[A_Sensor]>Threshold_Speed_Control &&  Result_ADC[B_Sensor]>Threshold_Speed_Control && Result_ADC[C_Sensor]>Threshold_Speed_Control && Result_ADC[D_Sensor]>Threshold_Speed_Control) && (SENSOR_ENABLED & 0x0001)!=0 && R_SPEED_TARGET<0 && L_SPEED_TARGET<0 )
+	{
+		uint8_t Answer[64];
+			sprintf((char*)Answer," M0 H2 T2\r\n");
+			Transmit_UART_2(Answer);
+		REGULATOR_CACHE=No_Control;
+	}
 	return 0.0;
 }

@@ -252,7 +252,7 @@ void COMMAND_G1(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number,
 	}  
 	uint8_t Answer[64];  
 	//sprintf((char*)Answer,"OK: D=%0.2f L=%0.2f T=%0.2f\r\n",SPEED_R_DES_CACHE,SPEED_L_DES_CACHE,TIMEOUT_MS_CACHE);  
-	Transmit_UART_2(Answer);  
+	//Transmit_UART_2(Answer);  
 	UPDATE_DEST_PARAMETERS=1;  
 }  
 void COMMAND_G2(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters )  
@@ -311,7 +311,7 @@ void COMMAND_G92(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number
 			j++;  
 	}  
 	uint8_t Answer[64];  
-	sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE*180/PI);  
+	//sprintf((char*)Answer,"OK: X=%0.2f Y=%0.2f A=%0.2f \r\n",X_POS_MM_CACHE,Y_POS_MM_CACHE,ANGLE_POS_RAD_CACHE*180/PI);  
 	//Transmit_UART_2(Answer);  
 	UPDATE_POS_PARAMETERS=1;  
 }  
@@ -488,7 +488,7 @@ void COMMAND_M201(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Numbe
 		sprintf((char*)Answer,"OK: A_Profil S=%d A=%d B=%d \r\n",SPEED_MAX_ANGLE_MM_S_CACHE,ACCELERATION_MAX_ANGLE_MM_S2_CACHE,BRAKING_MAX_ANGLE_MM_S2_CACHE); 
 	else 
 		sprintf((char*)Answer,"KO: No Profil selected (H0 or H1) \r\n"); 
-	//Transmit_UART_2(Answer); 
+	Transmit_UART_2(Answer); 
 	UPDATE_CONTROL_PARAMETERS=1; 
 } 
 void COMMAND_M202(uint8_t* Table_Parameters_Letter,float* Table_Parameters_Number, int8_t Number_Parameters ) 
